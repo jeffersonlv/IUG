@@ -32,6 +32,11 @@ if (!file_exists('.env') && file_exists('.env.example')) {
     $output[] = "";
 }
 
+if (!getenv('APP_KEY') || empty(getenv('APP_KEY'))) {
+    run("php artisan key:generate", $output, $errors);
+    $output[] = "";
+}
+
 if (file_exists('composer.json')) {
     run("HOME=/home/u671917614 composer install --no-interaction --prefer-dist --optimize-autoloader", $output, $errors);
     $output[] = "";
