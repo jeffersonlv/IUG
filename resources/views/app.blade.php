@@ -26,9 +26,10 @@
 
         /* ── Navbar ── */
         .navbar {
-            background: var(--iug-navy) !important;
+            background: #fff !important;
             padding: 0.6rem 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-bottom: 3px solid var(--iug-orange);
         }
 
         .navbar-brand {
@@ -88,7 +89,7 @@
         }
 
         .nav-link {
-            color: rgba(255,255,255,0.85) !important;
+            color: var(--iug-navy) !important;
             font-size: 0.875rem;
             font-weight: 600;
             padding: 0.5rem 1rem !important;
@@ -97,8 +98,8 @@
         }
 
         .nav-link:hover, .nav-link.active {
-            color: #fff !important;
-            background: rgba(232,96,10,0.2);
+            color: var(--iug-orange) !important;
+            background: rgba(232,96,10,0.07);
         }
 
         .btn-logout-nav {
@@ -248,7 +249,7 @@
         .mode-switch-nav {
             display: flex;
             align-items: center;
-            background: rgba(255,255,255,0.1);
+            background: rgba(26,43,95,0.08);
             border-radius: 20px;
             padding: 3px;
             gap: 2px;
@@ -264,17 +265,18 @@
         }
 
         .mode-active-site {
-            background: #fff;
-            color: var(--iug-navy);
+            background: var(--iug-navy);
+            color: #fff;
         }
 
         .mode-inactive-nav {
-            color: rgba(255,255,255,0.6);
-            transition: color 0.15s;
+            color: var(--iug-navy);
+            opacity: 0.5;
+            transition: opacity 0.15s;
         }
 
         .mode-inactive-nav:hover {
-            color: #fff;
+            opacity: 1;
         }
     </style>
     @yield('styles')
@@ -286,7 +288,7 @@
                 <img src="/images/logo.png" alt="Instituto Ulysses Guimarães" style="height:44px; width:auto;">
             </a>
 
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="filter:invert(1) sepia(1) saturate(5) hue-rotate(175deg);">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
