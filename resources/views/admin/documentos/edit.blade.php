@@ -3,16 +3,19 @@
 @section('content')
 <div class="container">
     <h1>Editar Documento</h1>
-    <form action="{{ route('admin.documentos.update', $documento->id) }}" method="POST">
+    <form action="{{ route('admin.documentos.update', $documento->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div>
             <label>Nome:</label>
             <input type="text" name="nome" value="{{ $documento->nome }}" required>
+            @error('nome') <span class="text-danger">{{ $message }}</span> @enderror
         </div>
         <div>
-            <label>Arquivo PDF:</label>
-            <input type="text" name="arquivo_pdf" value="{{ $documento->arquivo_pdf }}" required>
+            <label>Arquivo PDF (máx 10MB, deixe em branco para manter atual):</label>
+            <input type="file" name="arquivo_pdf" accept=".pdf">
+            <small>Atual: {{ $documento->arquivo_pdf }}</small>
+            @error('arquivo_pdf') <span class="text-danger">{{ $message }}</span> @enderror
         </div>
         <div>
             <label>Ativo:</label>
