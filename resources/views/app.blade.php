@@ -7,6 +7,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <style>
+        html { scroll-behavior: smooth; }
+
         :root {
             --iug-orange: #E8600A;
             --iug-navy:   #1A2B5F;
@@ -294,8 +296,8 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center gap-1">
-                    <li class="nav-item"><a class="nav-link" href="/cursos">Cursos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/documentos">Documentos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/#cursos">Cursos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/#documentos">Documentos</a></li>
                     <li class="nav-item"><a class="nav-link" href="/contato">Contato</a></li>
                     @auth
                         <li class="nav-item">

@@ -11,7 +11,7 @@
 <div class="container py-5">
 
     {{-- Cursos --}}
-    <div class="mb-5">
+    <div class="mb-5" id="cursos">
         <div class="accent-bar"></div>
         <h2 class="fw-bold mb-4" style="color:#1A2B5F; font-size:1.3rem;">Cursos e Capacitações</h2>
 
@@ -39,7 +39,7 @@
     </div>
 
     {{-- Documentos --}}
-    <div>
+    <div id="documentos">
         <div class="accent-bar"></div>
         <h2 class="fw-bold mb-4" style="color:#1A2B5F; font-size:1.3rem;">Documentos e Materiais</h2>
 
