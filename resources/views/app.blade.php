@@ -244,15 +244,37 @@
 
         footer span { color: var(--iug-orange); }
 
-        /* ── Admin sidebar badge ── */
-        .admin-badge {
-            background: var(--iug-orange);
+        /* ── Mode switch (logged in, public side) ── */
+        .mode-switch-nav {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 3px;
+            gap: 2px;
+        }
+
+        .mode-switch-nav span, .mode-switch-nav a {
+            padding: 4px 14px;
+            border-radius: 16px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .mode-active-site {
+            background: #fff;
+            color: var(--iug-navy);
+        }
+
+        .mode-inactive-nav {
+            color: rgba(255,255,255,0.6);
+            transition: color 0.15s;
+        }
+
+        .mode-inactive-nav:hover {
             color: #fff;
-            font-size: 0.65rem;
-            padding: 1px 6px;
-            border-radius: 10px;
-            vertical-align: middle;
-            margin-left: 4px;
         }
     </style>
     @yield('styles')
@@ -285,15 +307,18 @@
                     <li class="nav-item"><a class="nav-link" href="/documentos">Documentos</a></li>
                     <li class="nav-item"><a class="nav-link" href="/contato">Contato</a></li>
                     @auth
-                        <li class="nav-item"><a class="nav-link" href="/admin/dashboard">Admin <span class="admin-badge">●</span></a></li>
+                        <li class="nav-item">
+                            <div class="mode-switch-nav">
+                                <span class="mode-active-site">Site</span>
+                                <a href="{{ route('admin.dashboard') }}" class="mode-inactive-nav">Admin</a>
+                            </div>
+                        </li>
                         <li class="nav-item">
                             <form action="{{ route('logout') }}" method="POST" style="display:inline;">
                                 @csrf
                                 <button class="btn-logout-nav">Sair</button>
                             </form>
                         </li>
-                    @else
-                        <li class="nav-item"><a class="nav-link" href="/admin/login">Entrar</a></li>
                     @endauth
                 </ul>
             </div>
