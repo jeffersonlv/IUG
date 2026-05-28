@@ -29,7 +29,7 @@
         <div class="mb-3">
             <label class="form-label">Data de Vencimento <small class="text-muted">(opcional — documento não aparece no site após esta data)</small></label>
             <input type="date" name="data_vencimento" class="form-control @error('data_vencimento') is-invalid @enderror"
-                   value="{{ old('data_vencimento', $documento->data_vencimento?->format('Y-m-d')) }}" style="max-width:200px;">
+                   value="{{ old('data_vencimento', $documento->data_vencimento ? $documento->data_vencimento->format('Y-m-d') : '') }}" style="max-width:200px;">
             @error('data_vencimento')<div class="invalid-feedback">{{ $message }}</div>@enderror
             @if($documento->vencido)
                 <div class="text-danger small mt-1">⚠️ Este documento está vencido e não aparece no site.</div>
