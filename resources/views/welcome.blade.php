@@ -87,40 +87,60 @@
         <div class="accent-bar"></div>
         <h2 style="font-family:'Montserrat',sans-serif; font-weight:700; color:#1A2B5F; font-size:1.5rem; margin-bottom:2rem;">Cursos e Capacitações</h2>
 
+        <div class="row g-4">
         @forelse($cursos as $curso)
-        <div class="card mb-4">
-            <div class="card-body p-4">
-                <div class="row align-items-start">
-                    <div class="col">
-                        <p class="text-muted small mb-1 fw-semibold" style="color:#E8600A !important; text-transform:uppercase; letter-spacing:1px;">
-                            📍 {{ $curso->local }}
-                        </p>
-                        <h4 style="font-family:'Montserrat',sans-serif; font-weight:700; color:#1A2B5F; margin-bottom:0.5rem;">
-                            {{ $curso->titulo }}
-                        </h4>
-                        <p class="text-muted mb-2" style="font-size:0.9rem;">
-                            📅
-                            @if($curso->data_inicio->format('m/Y') === $curso->data_fim->format('m/Y'))
-                                De {{ $curso->data_inicio->format('d') }} a {{ $curso->data_fim->format('d') }} de {{ $curso->data_inicio->translatedFormat('F \d\e Y') }}
-                            @else
-                                {{ $curso->data_inicio->format('d/m/Y') }} — {{ $curso->data_fim->format('d/m/Y') }}
-                            @endif
-                        </p>
-                        @if($curso->topicos)
-                        <p class="text-muted mb-0" style="font-size:0.875rem;">{{ $curso->topicos }}</p>
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100" style="border-top:4px solid #E8600A;">
+                <div class="card-body p-4 d-flex flex-column">
+                    <p style="color:#E8600A; font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.4rem;">
+                        📍 {{ $curso->local }}
+                    </p>
+                    <h5 style="font-family:'Montserrat',sans-serif; font-weight:700; color:#1A2B5F; font-size:1rem; margin-bottom:0.5rem; flex:1;">
+                        {{ $curso->titulo }}
+                    </h5>
+                    <p class="text-muted mb-3" style="font-size:0.85rem;">
+                        📅
+                        @if($curso->data_inicio->format('m/Y') === $curso->data_fim->format('m/Y'))
+                            {{ $curso->data_inicio->format('d') }} a {{ $curso->data_fim->format('d') }}/{{ $curso->data_fim->format('m/Y') }}
+                        @else
+                            {{ $curso->data_inicio->format('d/m/Y') }} — {{ $curso->data_fim->format('d/m/Y') }}
                         @endif
+                    </p>
+
+                    {{-- Avatares palestrantes --}}
+                    @if($curso->palestrantes->count())
+                    <div class="d-flex align-items-center gap-1 mb-3" style="flex-wrap:wrap;">
+                        @foreach($curso->palestrantes as $p)
+                        <div title="{{ $p->nome }}" style="position:relative;">
+                            @if($p->foto)
+                                <img src="{{ \Illuminate\Support\Facades\Storage::url('palestrantes/' . $p->foto) }}"
+                                     alt="{{ $p->nome }}"
+                                     style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,0.15);">
+                            @else
+                                <div style="width:36px; height:36px; border-radius:50%; background:#1A2B5F; display:flex; align-items:center; justify-content:center; color:#fff; font-size:0.75rem; font-weight:700; border:2px solid #fff;">
+                                    {{ strtoupper(substr($p->nome, 0, 1)) }}
+                                </div>
+                            @endif
+                        </div>
+                        @endforeach
+                        <span class="text-muted ms-1" style="font-size:0.75rem;">{{ $curso->palestrantes->pluck('nome')->implode(', ') }}</span>
                     </div>
-                    @if($curso->folder_pdf)
-                    <div class="col-auto">
-                        <a href="/storage/{{ $curso->folder_pdf }}" target="_blank" class="btn btn-outline-primary btn-sm">📄 Folder</a>
-                    </div>
+                    @endif
+
+                    {{-- Botão PDF --}}
+                    @if($curso->arquivo_pdf)
+                    <a href="{{ \Illuminate\Support\Facades\Storage::url('cursos/' . $curso->arquivo_pdf) }}"
+                       target="_blank" class="btn btn-primary btn-sm mt-auto">
+                        📄 Download Flyer
+                    </a>
                     @endif
                 </div>
             </div>
         </div>
         @empty
-        <p class="text-muted">Nenhum curso disponível no momento.</p>
+        <div class="col"><p class="text-muted">Nenhum curso disponível no momento.</p></div>
         @endforelse
+        </div>
     </div>
 </section>
 
