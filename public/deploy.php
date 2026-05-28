@@ -31,14 +31,8 @@ if (!file_exists('.env') && file_exists('.env.example')) {
     $output[] = "Created .env from .env.example";
 }
 
-// Check if APP_KEY is empty
-$envFile = '.env';
-if (file_exists($envFile)) {
-    $envContent = file_get_contents($envFile);
-    if (strpos($envContent, 'APP_KEY=') !== false && !preg_match('/APP_KEY=base64:/', $envContent)) {
-        run("php artisan key:generate", $output, $errors);
-    }
-}
+// Always ensure APP_KEY is set and valid
+run("php artisan key:generate --force", $output, $errors);
 $output[] = "";
 
 if (file_exists('composer.json')) {
