@@ -98,7 +98,7 @@ class CursoController extends Controller
             $validated['arquivo_pdf'] = $filename;
         }
 
-        $validated['ativo'] = $validated['ativo'] ?? true;
+        $validated['ativo'] = $request->boolean('ativo');
         $curso->update($validated);
         $curso->palestrantes()->sync($request->palestrantes ?? []);
 

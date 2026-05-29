@@ -91,7 +91,7 @@ class DocumentoController extends Controller
             $validated['arquivo_pdf'] = $filename;
         }
 
-        $validated['ativo'] = $validated['ativo'] ?? true;
+        $validated['ativo'] = $request->boolean('ativo');
         $documento->update($validated);
         return redirect('/admin/documentos')->with('success', 'Documento atualizado com sucesso.');
     }

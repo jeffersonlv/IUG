@@ -69,7 +69,7 @@ class PalestranteController extends Controller
             $validated['foto'] = $filename;
         }
 
-        $validated['ativo'] = $validated['ativo'] ?? true;
+        $validated['ativo'] = $request->boolean('ativo');
         $palestrante->update($validated);
         return redirect()->route('admin.palestrantes.index')->with('success', 'Palestrante atualizado com sucesso.');
     }
