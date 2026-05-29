@@ -25,9 +25,21 @@ class CursoController extends Controller
     {
         $q = $request->input('q');
         $qs = $q ? '%' . str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $q) . '%' : null;
-        $cursos = Curso::when($qs, fn($query) => $query->where('titulo', 'like', $qs)->orWhere('local', 'like', $qs))
-            ->orderBy('ordem')->orderBy('data_inicio')->paginate(15)->withQueryString();
-        return view('admin.cursos.index', compact('cursos', 'q'));
+
+        $query = Curso::when($qs, fn($q) => $q->where('titulo', 'like', $qs)->orWhere('local', 'like', $qs))
+            ->orderBy('ordem')->orderBy('data_inicio');
+
+        if ($qs) {
+            $cursos   = $query->get();
+            $proximos = collect();
+            $passados = collect();
+        } else {
+            $cursos   = collect();
+            $proximos = (clone $query)->whereDate('data_fim', '>=', now()->toDateString())->get();
+            $passados = (clone $query)->whereDate('data_fim', '<', now()->toDateString())->orderByDesc('data_fim')->get();
+        }
+
+        return view('admin.cursos.index', compact('cursos', 'proximos', 'passados', 'q'));
     }
 
     public function adminCreate()
