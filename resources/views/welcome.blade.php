@@ -129,10 +129,19 @@
 
                     {{-- Botão PDF --}}
                     @if($curso->arquivo_pdf)
-                    <a href="{{ \Illuminate\Support\Facades\Storage::url('cursos/' . $curso->arquivo_pdf) }}"
-                       target="_blank" class="btn btn-primary btn-sm mt-auto">
-                        📄 Download Flyer
-                    </a>
+                    <div class="d-flex gap-2 mt-auto">
+                        <button type="button" class="btn btn-primary btn-sm"
+                                data-bs-toggle="modal"
+                                data-bs-target="#pdfModal"
+                                data-pdf="{{ \Illuminate\Support\Facades\Storage::url('cursos/' . $curso->arquivo_pdf) }}"
+                                data-titulo="{{ $curso->titulo }}">
+                            👁 Ver Flyer
+                        </button>
+                        <a href="{{ \Illuminate\Support\Facades\Storage::url('cursos/' . $curso->arquivo_pdf) }}"
+                           target="_blank" class="btn btn-outline-primary btn-sm">
+                            ⬇ Download
+                        </a>
+                    </div>
                     @endif
                 </div>
             </div>
@@ -187,5 +196,46 @@
         </div>
     </div>
 </section>
+
+{{-- Modal PDF --}}
+<div class="modal fade" id="pdfModal" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background:#1A2B5F; color:#fff; padding:0.75rem 1.25rem;">
+                <h6 class="modal-title mb-0 fw-bold" id="pdfModalTitulo"></h6>
+                <div class="d-flex align-items-center gap-2 ms-auto">
+                    <a id="pdfDownloadBtn" href="#" target="_blank"
+                       class="btn btn-sm" style="background:#E8600A; color:#fff; font-size:0.75rem;">⬇ Download</a>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+            </div>
+            <div class="modal-body p-0" style="height:80vh;">
+                <embed id="pdfEmbed" src="" type="application/pdf" width="100%" height="100%"
+                       style="display:block; min-height:500px;">
+                <div id="pdfFallback" style="display:none; padding:2rem; text-align:center;">
+                    <p class="text-muted mb-3">Seu dispositivo não suporta visualização de PDF inline.</p>
+                    <a id="pdfFallbackBtn" href="#" target="_blank" class="btn btn-primary">⬇ Abrir / Download PDF</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section('scripts')
+<script>
+document.getElementById('pdfModal').addEventListener('show.bs.modal', function(e) {
+    var btn  = e.relatedTarget;
+    var url  = btn.getAttribute('data-pdf');
+    var nome = btn.getAttribute('data-titulo');
+    document.getElementById('pdfModalTitulo').textContent = nome;
+    document.getElementById('pdfEmbed').src = url;
+    document.getElementById('pdfDownloadBtn').href = url;
+    document.getElementById('pdfFallbackBtn').href = url;
+});
+document.getElementById('pdfModal').addEventListener('hidden.bs.modal', function() {
+    document.getElementById('pdfEmbed').src = '';
+});
+</script>
+@endsection
 
 @endsection
