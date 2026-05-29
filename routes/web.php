@@ -72,6 +72,8 @@ Route::prefix('admin')->group(function () {
         Route::delete('/palestrantes/{id}', [\App\Http\Controllers\PalestranteController::class, 'adminDestroy'])->name('admin.palestrantes.destroy');
 
         Route::get('/alunos', [\App\Http\Controllers\AlunoController::class, 'adminIndex'])->name('admin.alunos.index');
+        Route::get('/alunos/lote', [\App\Http\Controllers\AlunoController::class, 'adminLote'])->name('admin.alunos.lote');
+        Route::post('/alunos/lote', [\App\Http\Controllers\AlunoController::class, 'adminLoteStore'])->name('admin.alunos.lote.store');
         Route::get('/alunos/create', [\App\Http\Controllers\AlunoController::class, 'adminCreate'])->name('admin.alunos.create');
         Route::post('/alunos', [\App\Http\Controllers\AlunoController::class, 'adminStore'])->name('admin.alunos.store');
         Route::get('/alunos/{id}/edit', [\App\Http\Controllers\AlunoController::class, 'adminEdit'])->name('admin.alunos.edit');

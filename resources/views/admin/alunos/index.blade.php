@@ -5,7 +5,10 @@
 @section('content')
 <div class="admin-page-header d-flex justify-content-between align-items-center">
     <h1>Alunos</h1>
-    <a href="{{ route('admin.alunos.create') }}" class="btn btn-primary btn-sm">+ Novo Aluno</a>
+    <div class="d-flex gap-2">
+        <a href="{{ route('admin.alunos.lote') }}" class="btn btn-outline-primary btn-sm">+ Lote</a>
+        <a href="{{ route('admin.alunos.create') }}" class="btn btn-primary btn-sm">+ Novo Aluno</a>
+    </div>
 </div>
 
 @if(session('success'))

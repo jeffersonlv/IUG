@@ -85,6 +85,45 @@ class AlunoController extends Controller
         return redirect()->route('admin.alunos.index')->with('success', 'Aluno atualizado com sucesso.');
     }
 
+    public function adminLote()
+    {
+        $cursos = Curso::orderBy('data_inicio', 'desc')->get();
+        return view('admin.alunos.lote', ['cursos' => $cursos, 'estados' => self::$estados]);
+    }
+
+    public function adminLoteStore(Request $request)
+    {
+        $request->validate([
+            'cidade'   => 'required|string|max:100',
+            'estado'   => 'required|string|size:2',
+            'curso_id' => 'required|exists:cursos,id',
+            'nomes'    => 'required|string',
+        ]);
+
+        $nomes = array_filter(array_map('trim', explode("\n", $request->nomes)));
+
+        if (empty($nomes)) {
+            return back()->withErrors(['nomes' => 'Informe ao menos um nome.'])->withInput();
+        }
+
+        $cidade = $request->cidade;
+        $estado = strtoupper($request->estado);
+        $cursoId = $request->curso_id;
+        $count = 0;
+
+        foreach ($nomes as $nome) {
+            if ($nome === '') continue;
+            $aluno = Aluno::firstOrCreate(
+                ['nome_completo' => $nome, 'cidade' => $cidade, 'estado' => $estado],
+            );
+            $aluno->cursos()->syncWithoutDetaching([$cursoId]);
+            $count++;
+        }
+
+        return redirect()->route('admin.alunos.index')
+            ->with('success', "$count aluno(s) cadastrado(s) com sucesso.");
+    }
+
     public function adminDestroy($id)
     {
         $aluno = Aluno::findOrFail($id);
