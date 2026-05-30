@@ -58,24 +58,23 @@ class CursoController extends Controller
     public function adminCreate()
     {
         $palestrantes = Palestrante::where('ativo', true)->orderBy('nome')->get();
-        return view('admin.cursos.create', compact('palestrantes'));
+        $configs      = SiteConfig::all()->pluck('valor', 'chave')->toArray();
+        return view('admin.cursos.create', compact('palestrantes', 'configs'));
     }
 
     public function adminStore(Request $request)
     {
         $validated = $request->validate([
-            'titulo'            => 'required|string|max:255',
-            'numero_seminario'  => 'nullable|string|max:20',
-            'data_inicio'       => 'required|date',
-            'data_fim'          => 'required|date|after_or_equal:data_inicio',
-            'local'             => 'required|string|max:255',
-            'investimento'      => 'nullable|string|max:100',
-            'carga_horaria'     => 'nullable|string|max:50',
-            'publico_alvo'      => 'nullable|string',
-            'topicos'           => 'nullable|string',
-            'arquivo_pdf'       => 'nullable|file|mimes:pdf|max:10240',
-            'ativo'             => 'boolean',
-            'ordem'             => 'nullable|integer|min:0|max:999',
+            'titulo'        => 'required|string|max:255',
+            'data_inicio'   => 'required|date',
+            'data_fim'      => 'required|date|after_or_equal:data_inicio',
+            'local'         => 'required|string|max:255',
+            'investimento'  => 'nullable|string|max:100',
+            'carga_horaria' => 'nullable|string|max:50',
+            'publico_alvo'  => 'nullable|string',
+            'topicos'       => 'nullable|string',
+            'arquivo_pdf'   => 'nullable|file|mimes:pdf|max:10240',
+            'ativo'         => 'boolean',
         ]);
 
         if ($request->hasFile('arquivo_pdf')) {
@@ -86,7 +85,7 @@ class CursoController extends Controller
         }
 
         $validated['programacao']         = $this->parseJson($request->input('programacao'));
-        $validated['folder_palestrantes'] = $this->parseJson($request->input('folder_palestrantes'));
+        $validated['folder_palestrantes'] = $this->resolveFolderPalestrantes($request->input('folder_palestrante_ids', []));
 
         $folderGerado = trim($request->input('folder_pdf_gerado', ''));
         if ($folderGerado) {
@@ -94,7 +93,7 @@ class CursoController extends Controller
         }
 
         $validated['ativo'] = $validated['ativo'] ?? true;
-        $validated['ordem'] = $validated['ordem'] ?? 0;
+        $validated['ordem'] = 0;
         $curso = Curso::create($validated);
 
         if ($request->filled('palestrantes')) {
@@ -135,18 +134,16 @@ class CursoController extends Controller
     {
         $curso = Curso::findOrFail($id);
         $validated = $request->validate([
-            'titulo'            => 'required|string|max:255',
-            'numero_seminario'  => 'nullable|string|max:20',
-            'data_inicio'       => 'required|date',
-            'data_fim'          => 'required|date|after_or_equal:data_inicio',
-            'local'             => 'required|string|max:255',
-            'investimento'      => 'nullable|string|max:100',
-            'carga_horaria'     => 'nullable|string|max:50',
-            'publico_alvo'      => 'nullable|string',
-            'topicos'           => 'nullable|string',
-            'arquivo_pdf'       => 'nullable|file|mimes:pdf|max:10240',
-            'ativo'             => 'boolean',
-            'ordem'             => 'nullable|integer|min:0|max:999',
+            'titulo'        => 'required|string|max:255',
+            'data_inicio'   => 'required|date',
+            'data_fim'      => 'required|date|after_or_equal:data_inicio',
+            'local'         => 'required|string|max:255',
+            'investimento'  => 'nullable|string|max:100',
+            'carga_horaria' => 'nullable|string|max:50',
+            'publico_alvo'  => 'nullable|string',
+            'topicos'       => 'nullable|string',
+            'arquivo_pdf'   => 'nullable|file|mimes:pdf|max:10240',
+            'ativo'         => 'boolean',
         ]);
 
         if ($request->hasFile('arquivo_pdf')) {
@@ -160,7 +157,7 @@ class CursoController extends Controller
         }
 
         $validated['programacao']         = $this->parseJson($request->input('programacao'));
-        $validated['folder_palestrantes'] = $this->parseJson($request->input('folder_palestrantes'));
+        $validated['folder_palestrantes'] = $this->resolveFolderPalestrantes($request->input('folder_palestrante_ids', []));
 
         $folderGerado = trim($request->input('folder_pdf_gerado', ''));
         if ($folderGerado) {
@@ -183,17 +180,18 @@ class CursoController extends Controller
     public function gerarFolderPdf(Request $request)
     {
         $dados = $request->validate([
-            'titulo'           => 'required|string|max:255',
-            'numero_seminario' => 'nullable|string|max:20',
-            'data_inicio'      => 'nullable|string|max:50',
-            'data_fim'         => 'nullable|string|max:50',
-            'local'            => 'nullable|string|max:255',
-            'investimento'     => 'nullable|string|max:100',
-            'carga_horaria'    => 'nullable|string|max:50',
-            'publico_alvo'     => 'nullable|string',
-            'programacao'      => 'nullable|array',
-            'folder_palestrantes' => 'nullable|array',
+            'titulo'                  => 'required|string|max:255',
+            'data_inicio'             => 'nullable|string|max:50',
+            'data_fim'                => 'nullable|string|max:50',
+            'local'                   => 'nullable|string|max:255',
+            'investimento'            => 'nullable|string|max:100',
+            'carga_horaria'           => 'nullable|string|max:50',
+            'publico_alvo'            => 'nullable|string',
+            'programacao'             => 'nullable|array',
+            'folder_palestrante_ids'  => 'nullable|array',
         ]);
+
+        $dados['folder_palestrantes'] = $this->resolveFolderPalestrantes($dados['folder_palestrante_ids'] ?? []);
 
         $configs = SiteConfig::all()->pluck('valor', 'chave')->toArray();
 
@@ -221,6 +219,14 @@ class CursoController extends Controller
             'path'    => 'cursos/folders/' . $filename,
             'url'     => Storage::url($caminho),
         ]);
+    }
+
+    private function resolveFolderPalestrantes($ids): ?array
+    {
+        if (empty($ids)) return null;
+        return Palestrante::whereIn('id', $ids)->orderBy('nome')->get()
+            ->map(fn($p) => ['nome' => $p->nome, 'cargo' => $p->descricao ?? ''])
+            ->values()->all();
     }
 
     private function parseJson(?string $value): ?array
