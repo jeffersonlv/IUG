@@ -176,7 +176,7 @@
     {{-- Título --}}
     <div class="titulo-bloco">
         @if(!empty($d['local']))
-        <div class="local-badge">{{ strtoupper($d['local']) }}</div>
+        <div class="local-badge">{{ $d['local'] }}</div>
         @endif
         <div class="titulo-evento">{{ strtoupper($d['titulo']) }}</div>
         @if($di && $df)
