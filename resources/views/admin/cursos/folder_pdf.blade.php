@@ -114,21 +114,37 @@
         margin-bottom: 1.5mm;
     }
     .right-instagram { font-size: 9pt; margin-bottom: 5mm; line-height: 1.3; }
-    .pal-item { margin-bottom: 4mm; width: 18.7mm; }   /* 110% da foto (17mm) */
+    .pal-item {
+        margin-bottom: 4mm;
+        width: 100%;
+        display: table;
+        table-layout: fixed;
+    }
+    .pal-foto-cell {
+        display: table-cell;
+        vertical-align: top;
+        width: 18mm;
+        padding-right: 2mm;
+    }
+    .pal-texto-cell {
+        display: table-cell;
+        vertical-align: top;
+    }
     .pal-foto {
         width: 17mm;
         height: 17mm;
         border-radius: 1mm;
         object-fit: cover;
-        margin-bottom: 1mm;
+        display: block;
     }
     .pal-nome  {
-        font-weight: bold; font-size: 7pt; color: #14245c; line-height: 1.15;
+        font-weight: bold; font-size: 7.5pt; color: #14245c; line-height: 1.2;
         word-wrap: break-word; overflow-wrap: break-word;
     }
     .pal-cargo {
-        font-size: 6pt; color: #333; font-style: italic; line-height: 1.15;
+        font-size: 6.5pt; color: #333; font-style: italic; line-height: 1.2;
         word-wrap: break-word; overflow-wrap: break-word;
+        margin-top: 0.5mm;
     }
 
     .obs {
@@ -241,9 +257,18 @@
                 <div class="right-titulo">Palestrantes:</div>
                 @foreach($d['folder_palestrantes'] as $p)
                 <div class="pal-item">
-                    @if(!empty($p['foto']))<img class="pal-foto" src="{{ $p['foto'] }}" alt="">@endif
-                    <div class="pal-nome">{{ $p['nome'] ?? '' }}</div>
-                    @if(!empty($p['cargo']))<div class="pal-cargo">{{ $p['cargo'] }}</div>@endif
+                    @if(!empty($p['foto']))
+                    <div class="pal-foto-cell"><img class="pal-foto" src="{{ $p['foto'] }}" alt=""></div>
+                    <div class="pal-texto-cell">
+                        <div class="pal-nome">{{ $p['nome'] ?? '' }}</div>
+                        @if(!empty($p['cargo']))<div class="pal-cargo">{{ $p['cargo'] }}</div>@endif
+                    </div>
+                    @else
+                    <div class="pal-texto-cell">
+                        <div class="pal-nome">{{ $p['nome'] ?? '' }}</div>
+                        @if(!empty($p['cargo']))<div class="pal-cargo">{{ $p['cargo'] }}</div>@endif
+                    </div>
+                    @endif
                 </div>
                 @endforeach
                 @endif
