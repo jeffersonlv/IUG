@@ -19,10 +19,12 @@
             <div class="p-3">
                 @forelse($cursos as $curso)
                 @php
-                    $hoje   = now()->toDateString();
-                    $inicio = $curso->data_inicio->toDateString();
-                    $fim    = $curso->data_fim->toDateString();
+                    $hoje   = now()->startOfDay();
+                    $inicio = $curso->data_inicio->startOfDay();
+                    $fim    = $curso->data_fim->startOfDay();
                     $status = $inicio > $hoje ? 'futuro' : ($fim < $hoje ? 'passado' : 'hoje');
+                    $diasParaIniciar = $hoje->diffInDays($inicio, false);
+                    $diasTerminou   = $fim->diffInDays($hoje, false);
                 @endphp
                 <div class="d-flex gap-3 mb-3">
                     {{-- Dot timeline --}}
@@ -39,8 +41,10 @@
                             <span class="fw-semibold" style="font-size:0.875rem; color:#1A2B5F;">{{ $curso->titulo }}</span>
                             @if($status === 'hoje')
                                 <span class="badge" style="background:#E8600A; font-size:0.65rem;">Em andamento</span>
+                            @elseif($status === 'futuro')
+                                <span class="badge bg-primary" style="font-size:0.65rem;">Começa em {{ $diasParaIniciar }} dia{{ $diasParaIniciar != 1 ? 's' : '' }}</span>
                             @elseif($status === 'passado')
-                                <span class="badge bg-secondary" style="font-size:0.65rem;">Encerrado</span>
+                                <span class="badge bg-secondary" style="font-size:0.65rem;">Terminou há {{ $diasTerminou }} dia{{ $diasTerminou != 1 ? 's' : '' }}</span>
                             @endif
                         </div>
                         <small class="text-muted d-block">
@@ -86,17 +90,6 @@
             </ul>
         </div>
 
-        {{-- Atalhos rápidos --}}
-        <div class="card p-3">
-            <h6 class="fw-bold mb-3" style="color:#1A2B5F; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px;">Atalhos</h6>
-            <div class="d-flex flex-wrap gap-2">
-                <a href="{{ route('admin.cursos.create') }}" class="btn btn-sm btn-primary">+ Curso</a>
-                <a href="{{ route('admin.documentos.create') }}" class="btn btn-sm btn-primary">+ Documento</a>
-                <a href="{{ route('admin.palestrantes.create') }}" class="btn btn-sm btn-primary">+ Palestrante</a>
-                <a href="{{ route('admin.mensagens.index') }}" class="btn btn-sm btn-outline-primary">Mensagens</a>
-                <a href="{{ route('admin.config.index') }}" class="btn btn-sm btn-outline-secondary">Config</a>
-            </div>
-        </div>
     </div>
 
 </div>
