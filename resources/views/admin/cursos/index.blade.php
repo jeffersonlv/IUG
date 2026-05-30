@@ -65,14 +65,28 @@
 <div class="card mb-4">
     <table class="table mb-0">
         <thead><tr>
-            <th>Título</th><th>Data Início</th><th>Local</th><th>Ativo</th><th style="width:140px;">Ações</th>
+            <th>Título</th><th>Data Início</th><th>Local</th><th>Status</th><th>Ativo</th><th style="width:140px;">Ações</th>
         </tr></thead>
         <tbody>
         @forelse($proximos as $curso)
+            @php
+                $hoje  = now()->startOfDay();
+                $ini   = $curso->data_inicio->startOfDay();
+                $fim   = $curso->data_fim->startOfDay();
+                $emAndamento = $ini <= $hoje && $fim >= $hoje;
+                $diasInicia  = $hoje->diffInDays($ini, false);
+            @endphp
             <tr>
                 <td class="fw-semibold">{{ $curso->titulo }}</td>
                 <td>{{ $curso->data_inicio->format('d/m/Y') }}</td>
                 <td>{{ $curso->local }}</td>
+                <td>
+                    @if($emAndamento)
+                        <span class="badge" style="background:#E8600A;">Em andamento</span>
+                    @else
+                        <span class="badge bg-primary">Começa em {{ $diasInicia }} dia{{ $diasInicia != 1 ? 's' : '' }}</span>
+                    @endif
+                </td>
                 <td>
                     @if($curso->ativo)<span class="badge" style="background:#1A2B5F;">Sim</span>
                     @else<span class="badge bg-secondary">Não</span>@endif
@@ -87,7 +101,7 @@
                 </td>
             </tr>
         @empty
-            <tr><td colspan="5" class="text-center text-muted py-3" style="font-size:0.875rem;">Nenhum curso próximo.</td></tr>
+            <tr><td colspan="6" class="text-center text-muted py-3" style="font-size:0.875rem;">Nenhum curso próximo.</td></tr>
         @endforelse
         </tbody>
     </table>
@@ -103,10 +117,12 @@
         </tr></thead>
         <tbody>
         @foreach($passados as $curso)
+            @php $diasTerminou = $curso->data_fim->startOfDay()->diffInDays(now()->startOfDay()); @endphp
             <tr style="opacity:0.7;">
                 <td class="fw-semibold">{{ $curso->titulo }}</td>
                 <td class="text-muted" style="font-size:0.875rem;">{{ $curso->data_inicio->format('d/m/Y') }}</td>
                 <td>{{ $curso->local }}</td>
+                <td><span class="badge bg-secondary">Terminou há {{ $diasTerminou }} dia{{ $diasTerminou != 1 ? 's' : '' }}</span></td>
                 <td>
                     @if($curso->ativo)<span class="badge" style="background:#1A2B5F;">Sim</span>
                     @else<span class="badge bg-secondary">Não</span>@endif
