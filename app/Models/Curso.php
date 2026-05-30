@@ -9,7 +9,12 @@ class Curso extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['titulo', 'data_inicio', 'data_fim', 'local', 'topicos', 'arquivo_pdf', 'folder_pdf', 'ativo', 'ordem'];
+    protected $fillable = [
+        'titulo', 'numero_seminario', 'data_inicio', 'data_fim', 'local',
+        'investimento', 'carga_horaria', 'publico_alvo',
+        'programacao', 'folder_palestrantes',
+        'topicos', 'arquivo_pdf', 'folder_pdf', 'ativo', 'ordem',
+    ];
 
     public function alunos()
     {
@@ -22,8 +27,10 @@ class Curso extends Model
     }
 
     protected $casts = [
-        'data_inicio' => 'datetime',
-        'data_fim' => 'datetime',
-        'ativo' => 'boolean',
+        'data_inicio'        => 'datetime',
+        'data_fim'           => 'datetime',
+        'ativo'              => 'boolean',
+        'programacao'        => 'array',
+        'folder_palestrantes'=> 'array',
     ];
 }

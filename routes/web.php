@@ -48,6 +48,7 @@ Route::prefix('admin')->group(function () {
 
         Route::get('/cursos', [\App\Http\Controllers\CursoController::class, 'adminIndex'])->name('admin.cursos.index');
         Route::get('/cursos/create', [\App\Http\Controllers\CursoController::class, 'adminCreate'])->name('admin.cursos.create');
+        Route::post('/cursos/gerar-folder-pdf', [\App\Http\Controllers\CursoController::class, 'gerarFolderPdf'])->name('admin.cursos.gerar-folder-pdf');
         Route::post('/cursos', [\App\Http\Controllers\CursoController::class, 'adminStore'])->name('admin.cursos.store');
         Route::get('/cursos/{id}/edit', [\App\Http\Controllers\CursoController::class, 'adminEdit'])->name('admin.cursos.edit');
         Route::put('/cursos/{id}', [\App\Http\Controllers\CursoController::class, 'adminUpdate'])->name('admin.cursos.update');

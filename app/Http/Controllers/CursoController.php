@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Curso;
 use App\Models\Palestrante;
+use App\Models\SiteConfig;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CursoController extends Controller
 {
@@ -62,14 +64,18 @@ class CursoController extends Controller
     public function adminStore(Request $request)
     {
         $validated = $request->validate([
-            'titulo'      => 'required|string|max:255',
-            'data_inicio' => 'required|date',
-            'data_fim'    => 'required|date|after_or_equal:data_inicio',
-            'local'       => 'required|string|max:255',
-            'topicos'     => 'nullable|string',
-            'arquivo_pdf' => 'nullable|file|mimes:pdf|max:10240',
-            'ativo'       => 'boolean',
-            'ordem'       => 'nullable|integer|min:0|max:999',
+            'titulo'            => 'required|string|max:255',
+            'numero_seminario'  => 'nullable|string|max:20',
+            'data_inicio'       => 'required|date',
+            'data_fim'          => 'required|date|after_or_equal:data_inicio',
+            'local'             => 'required|string|max:255',
+            'investimento'      => 'nullable|string|max:100',
+            'carga_horaria'     => 'nullable|string|max:50',
+            'publico_alvo'      => 'nullable|string',
+            'topicos'           => 'nullable|string',
+            'arquivo_pdf'       => 'nullable|file|mimes:pdf|max:10240',
+            'ativo'             => 'boolean',
+            'ordem'             => 'nullable|integer|min:0|max:999',
         ]);
 
         if ($request->hasFile('arquivo_pdf')) {
@@ -77,6 +83,14 @@ class CursoController extends Controller
             $filename = time() . '_' . $file->getClientOriginalName();
             $file->storeAs('cursos', $filename, 'public');
             $validated['arquivo_pdf'] = $filename;
+        }
+
+        $validated['programacao']         = $this->parseJson($request->input('programacao'));
+        $validated['folder_palestrantes'] = $this->parseJson($request->input('folder_palestrantes'));
+
+        $folderGerado = trim($request->input('folder_pdf_gerado', ''));
+        if ($folderGerado) {
+            $validated['folder_pdf'] = $folderGerado;
         }
 
         $validated['ativo'] = $validated['ativo'] ?? true;
@@ -121,14 +135,18 @@ class CursoController extends Controller
     {
         $curso = Curso::findOrFail($id);
         $validated = $request->validate([
-            'titulo'      => 'required|string|max:255',
-            'data_inicio' => 'required|date',
-            'data_fim'    => 'required|date|after_or_equal:data_inicio',
-            'local'       => 'required|string|max:255',
-            'topicos'     => 'nullable|string',
-            'arquivo_pdf' => 'nullable|file|mimes:pdf|max:10240',
-            'ativo'       => 'boolean',
-            'ordem'       => 'nullable|integer|min:0|max:999',
+            'titulo'            => 'required|string|max:255',
+            'numero_seminario'  => 'nullable|string|max:20',
+            'data_inicio'       => 'required|date',
+            'data_fim'          => 'required|date|after_or_equal:data_inicio',
+            'local'             => 'required|string|max:255',
+            'investimento'      => 'nullable|string|max:100',
+            'carga_horaria'     => 'nullable|string|max:50',
+            'publico_alvo'      => 'nullable|string',
+            'topicos'           => 'nullable|string',
+            'arquivo_pdf'       => 'nullable|file|mimes:pdf|max:10240',
+            'ativo'             => 'boolean',
+            'ordem'             => 'nullable|integer|min:0|max:999',
         ]);
 
         if ($request->hasFile('arquivo_pdf')) {
@@ -139,6 +157,14 @@ class CursoController extends Controller
             $filename = time() . '_' . $file->getClientOriginalName();
             $file->storeAs('cursos', $filename, 'public');
             $validated['arquivo_pdf'] = $filename;
+        }
+
+        $validated['programacao']         = $this->parseJson($request->input('programacao'));
+        $validated['folder_palestrantes'] = $this->parseJson($request->input('folder_palestrantes'));
+
+        $folderGerado = trim($request->input('folder_pdf_gerado', ''));
+        if ($folderGerado) {
+            $validated['folder_pdf'] = $folderGerado;
         }
 
         $validated['ativo'] = $request->boolean('ativo');
@@ -152,5 +178,55 @@ class CursoController extends Controller
     {
         Curso::destroy($id);
         return redirect('/admin/cursos')->with('success', 'Curso deletado com sucesso.');
+    }
+
+    public function gerarFolderPdf(Request $request)
+    {
+        $dados = $request->validate([
+            'titulo'           => 'required|string|max:255',
+            'numero_seminario' => 'nullable|string|max:20',
+            'data_inicio'      => 'nullable|string|max:50',
+            'data_fim'         => 'nullable|string|max:50',
+            'local'            => 'nullable|string|max:255',
+            'investimento'     => 'nullable|string|max:100',
+            'carga_horaria'    => 'nullable|string|max:50',
+            'publico_alvo'     => 'nullable|string',
+            'programacao'      => 'nullable|array',
+            'folder_palestrantes' => 'nullable|array',
+        ]);
+
+        $configs = SiteConfig::all()->pluck('valor', 'chave')->toArray();
+
+        $logoPath   = public_path('images/logo.png');
+        $logoBase64 = file_exists($logoPath)
+            ? 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath))
+            : '';
+
+        $bgPath   = public_path('images/background_folder.jpg');
+        $bgBase64 = file_exists($bgPath)
+            ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($bgPath))
+            : '';
+
+        $html = view('admin.cursos.folder_pdf', compact('dados', 'configs', 'logoBase64', 'bgBase64'))->render();
+
+        $pdf = Pdf::loadHTML($html)->setPaper('a4', 'portrait');
+
+        $filename = 'folder_' . bin2hex(random_bytes(8)) . '.pdf';
+        $caminho  = 'public/cursos/folders/' . $filename;
+
+        Storage::put($caminho, $pdf->output());
+
+        return response()->json([
+            'success' => true,
+            'path'    => 'cursos/folders/' . $filename,
+            'url'     => Storage::url($caminho),
+        ]);
+    }
+
+    private function parseJson(?string $value): ?array
+    {
+        if (!$value) return null;
+        $decoded = json_decode($value, true);
+        return (json_last_error() === JSON_ERROR_NONE) ? $decoded : null;
     }
 }
