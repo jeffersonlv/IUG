@@ -197,7 +197,7 @@ const CANVAS_HEIGHT = TEMPLATE_HEIGHT_MM * SCALE_RATIO;
 const TEMPLATE_TIPO = '{{ $template->tipo }}';
 
 let canvas;
-let currentLayout = JSON.parse('{{ addslashes(json_encode($template->layout ?? ['blocks' => []])) }}');
+let currentLayout = {!! json_encode($template->layout ?? ['blocks' => []], JSON_HEX_TAG | JSON_HEX_APOS) !!};
 let selectedObject = null;
 let blockIdCounter = 0;
 
