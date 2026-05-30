@@ -117,17 +117,14 @@
     .pal-item {
         margin-bottom: 4mm;
         width: 100%;
-        display: table;
-        table-layout: fixed;
+        border-collapse: collapse;
     }
     .pal-foto-cell {
-        display: table-cell;
         vertical-align: top;
         width: 18mm;
         padding-right: 2mm;
     }
     .pal-texto-cell {
-        display: table-cell;
         vertical-align: top;
     }
     .pal-foto {
@@ -256,20 +253,17 @@
                 @if(!empty($d['folder_palestrantes']))
                 <div class="right-titulo">Palestrantes:</div>
                 @foreach($d['folder_palestrantes'] as $p)
-                <div class="pal-item">
-                    @if(!empty($p['foto']))
-                    <div class="pal-foto-cell"><img class="pal-foto" src="{{ $p['foto'] }}" alt=""></div>
-                    <div class="pal-texto-cell">
-                        <div class="pal-nome">{{ $p['nome'] ?? '' }}</div>
-                        @if(!empty($p['cargo']))<div class="pal-cargo">{{ $p['cargo'] }}</div>@endif
-                    </div>
-                    @else
-                    <div class="pal-texto-cell">
-                        <div class="pal-nome">{{ $p['nome'] ?? '' }}</div>
-                        @if(!empty($p['cargo']))<div class="pal-cargo">{{ $p['cargo'] }}</div>@endif
-                    </div>
-                    @endif
-                </div>
+                <table class="pal-item">
+                    <tr>
+                        @if(!empty($p['foto']))
+                        <td class="pal-foto-cell"><img class="pal-foto" src="{{ $p['foto'] }}" alt=""></td>
+                        @endif
+                        <td class="pal-texto-cell">
+                            <div class="pal-nome">{{ $p['nome'] ?? '' }}</div>
+                            @if(!empty($p['cargo']))<div class="pal-cargo">{{ $p['cargo'] }}</div>@endif
+                        </td>
+                    </tr>
+                </table>
                 @endforeach
                 @endif
             </td>

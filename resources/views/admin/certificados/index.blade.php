@@ -16,7 +16,7 @@ $cursosJson = $cursos->map(fn($c) => [
     'cidade'     => $c->local,
     'topico'     => $c->topicos ?? '',
     'alunos_raw' => $c->alunos->map(fn($a) =>
-        $a->nome_completo . ($a->cidade || $a->estado ? '|' . trim($a->cidade . '-' . $a->estado, '-') : '')
+        $a->nome_completo . ($a->cidade || $a->estado ? ';' . trim($a->cidade . '-' . $a->estado, '-') : '')
     )->implode("\n"),
 ])->keyBy('id');
 @endphp
@@ -60,10 +60,10 @@ $cursosJson = $cursos->map(fn($c) => [
             <div class="mb-4">
                 <label class="form-label fw-semibold">
                     Participantes
-                    <small class="text-muted fw-normal">(um por linha — <code>Nome Completo|Cidade-UF</code>)</small>
+                    <small class="text-muted fw-normal">(um por linha — <code>Nome Completo;Cidade-UF</code>)</small>
                 </label>
                 <textarea id="nomes" class="form-control" rows="10" style="font-family:monospace; font-size:0.82rem;"
-                          placeholder="João da Silva|Brasília-DF&#10;Maria Santos|São Paulo-SP&#10;Carlos Oliveira"></textarea>
+                          placeholder="João da Silva;Brasília-DF&#10;Maria Santos;São Paulo-SP&#10;Carlos Oliveira"></textarea>
             </div>
 
             <div class="d-flex gap-2">
@@ -121,7 +121,7 @@ function parsearAlunos() {
     return raw.split('\n')
         .map(l => l.trim()).filter(l => l !== '')
         .map(l => {
-            const parts = l.split('|');
+            const parts = l.split(';');
             const nome  = parts[0].trim();
             const loc   = (parts[1] || '').trim();
             const locParts = loc.split('-');
