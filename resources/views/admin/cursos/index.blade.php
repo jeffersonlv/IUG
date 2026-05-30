@@ -140,6 +140,9 @@
         </tbody>
     </table>
 </div>
+    @if($passados->hasPages())
+    <div class="mt-3">{{ $passados->appends(['q' => $q])->links() }}</div>
+    @endif
 @endif
 
 @endif

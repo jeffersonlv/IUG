@@ -36,7 +36,7 @@ class CursoController extends Controller
         } else {
             $cursos   = collect();
             $proximos = (clone $query)->whereDate('data_fim', '>=', now()->toDateString())->get();
-            $passados = (clone $query)->whereDate('data_fim', '<', now()->toDateString())->orderByDesc('data_fim')->get();
+            $passados = (clone $query)->whereDate('data_fim', '<', now()->toDateString())->orderByDesc('data_fim')->paginate(10);
         }
 
         return view('admin.cursos.index', compact('cursos', 'proximos', 'passados', 'q'));
