@@ -20,12 +20,20 @@
 
 <div class="card">
     <table class="table mb-0">
+        @php
+            function palSortUrl($col, $sort, $dir) {
+                return request()->fullUrlWithQuery(['sort' => $col, 'dir' => ($sort === $col && $dir === 'asc') ? 'desc' : 'asc']);
+            }
+            function palSortIcon($col, $sort, $dir) {
+                return $sort === $col ? ($dir === 'asc' ? ' ▲' : ' ▼') : ' ⇅';
+            }
+        @endphp
         <thead>
             <tr>
                 <th style="width:60px;">Foto</th>
-                <th>Nome</th>
+                <th><a href="{{ palSortUrl('nome', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Nome{!! palSortIcon('nome', $sort, $dir) !!}</a></th>
                 <th>Descrição</th>
-                <th>Ativo</th>
+                <th><a href="{{ palSortUrl('ativo', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Ativo{!! palSortIcon('ativo', $sort, $dir) !!}</a></th>
                 <th style="width:140px;">Ações</th>
             </tr>
         </thead>

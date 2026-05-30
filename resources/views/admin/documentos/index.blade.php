@@ -14,11 +14,19 @@
 
 <div class="card">
     <table class="table mb-0">
+        @php
+            function docSortUrl($col, $sort, $dir) {
+                return request()->fullUrlWithQuery(['sort' => $col, 'dir' => ($sort === $col && $dir === 'asc') ? 'desc' : 'asc']);
+            }
+            function docSortIcon($col, $sort, $dir) {
+                return $sort === $col ? ($dir === 'asc' ? ' ▲' : ' ▼') : ' ⇅';
+            }
+        @endphp
         <thead>
             <tr>
-                <th>Nome</th>
-                <th>Vencimento</th>
-                <th>Ativo</th>
+                <th><a href="{{ docSortUrl('nome', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Nome{!! docSortIcon('nome', $sort, $dir) !!}</a></th>
+                <th><a href="{{ docSortUrl('data_vencimento', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Vencimento{!! docSortIcon('data_vencimento', $sort, $dir) !!}</a></th>
+                <th><a href="{{ docSortUrl('ativo', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Ativo{!! docSortIcon('ativo', $sort, $dir) !!}</a></th>
                 <th style="width:140px;">Ações</th>
             </tr>
         </thead>

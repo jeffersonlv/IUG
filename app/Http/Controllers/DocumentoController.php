@@ -30,10 +30,20 @@ class DocumentoController extends Controller
         return response()->download($path, $documento->arquivo_pdf);
     }
 
-    public function adminIndex()
+    public function adminIndex(Request $request)
     {
-        $documentos = Documento::orderBy('ordem')->orderBy('id')->get();
-        return view('admin.documentos.index', compact('documentos'));
+        $sortable = ['nome', 'data_vencimento', 'ativo'];
+        $sort = in_array($request->input('sort'), $sortable) ? $request->input('sort') : null;
+        $dir  = $request->input('dir') === 'desc' ? 'desc' : 'asc';
+
+        $query = Documento::query();
+        if ($sort) {
+            $query->orderBy($sort, $dir);
+        } else {
+            $query->orderBy('ordem')->orderBy('id');
+        }
+        $documentos = $query->get();
+        return view('admin.documentos.index', compact('documentos', 'sort', 'dir'));
     }
 
     public function adminCreate()

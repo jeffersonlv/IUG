@@ -18,12 +18,24 @@
     @if($q)<a href="{{ route('admin.cursos.index') }}" class="btn btn-sm btn-outline-secondary">✕</a>@endif
 </form>
 
+@php
+    function cursoSortUrl($col, $sort, $dir) {
+        return request()->fullUrlWithQuery(['sort' => $col, 'dir' => ($sort === $col && $dir === 'asc') ? 'desc' : 'asc']);
+    }
+    function cursoSortIcon($col, $sort, $dir) {
+        return $sort === $col ? ($dir === 'asc' ? ' ▲' : ' ▼') : ' ⇅';
+    }
+@endphp
+
 {{-- RESULTADO DE BUSCA --}}
 @if($q)
 <div class="card">
     <table class="table mb-0">
         <thead><tr>
-            <th>Título</th><th>Data Início</th><th>Local</th><th>Status</th><th>Ativo</th><th style="width:140px;">Ações</th>
+            <th><a href="{{ cursoSortUrl('titulo', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Título{!! cursoSortIcon('titulo', $sort, $dir) !!}</a></th>
+            <th><a href="{{ cursoSortUrl('data_inicio', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Data Início{!! cursoSortIcon('data_inicio', $sort, $dir) !!}</a></th>
+            <th><a href="{{ cursoSortUrl('local', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Local{!! cursoSortIcon('local', $sort, $dir) !!}</a></th>
+            <th>Status</th><th>Ativo</th><th style="width:140px;">Ações</th>
         </tr></thead>
         <tbody>
         @forelse($cursos as $curso)
@@ -65,7 +77,10 @@
 <div class="card mb-4">
     <table class="table mb-0">
         <thead><tr>
-            <th>Título</th><th>Data Início</th><th>Local</th><th>Status</th><th>Ativo</th><th style="width:140px;">Ações</th>
+            <th><a href="{{ cursoSortUrl('titulo', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Título{!! cursoSortIcon('titulo', $sort, $dir) !!}</a></th>
+            <th><a href="{{ cursoSortUrl('data_inicio', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Data Início{!! cursoSortIcon('data_inicio', $sort, $dir) !!}</a></th>
+            <th><a href="{{ cursoSortUrl('local', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Local{!! cursoSortIcon('local', $sort, $dir) !!}</a></th>
+            <th>Status</th><th>Ativo</th><th style="width:140px;">Ações</th>
         </tr></thead>
         <tbody>
         @forelse($proximos as $curso)
@@ -113,7 +128,10 @@
 <div class="card">
     <table class="table mb-0">
         <thead><tr>
-            <th>Título</th><th>Data</th><th>Local</th><th>Ativo</th><th style="width:140px;">Ações</th>
+            <th><a href="{{ cursoSortUrl('titulo', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Título{!! cursoSortIcon('titulo', $sort, $dir) !!}</a></th>
+            <th><a href="{{ cursoSortUrl('data_inicio', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Data{!! cursoSortIcon('data_inicio', $sort, $dir) !!}</a></th>
+            <th><a href="{{ cursoSortUrl('local', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Local{!! cursoSortIcon('local', $sort, $dir) !!}</a></th>
+            <th>Status</th><th>Ativo</th><th style="width:140px;">Ações</th>
         </tr></thead>
         <tbody>
         @foreach($passados as $curso)

@@ -26,20 +26,31 @@ class CursoController extends Controller
         $q = $request->input('q');
         $qs = $q ? '%' . str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $q) . '%' : null;
 
-        $query = Curso::when($qs, fn($q) => $q->where('titulo', 'like', $qs)->orWhere('local', 'like', $qs))
-            ->orderBy('ordem')->orderBy('data_inicio');
+        $sortable = ['titulo', 'data_inicio', 'local'];
+        $sort = in_array($request->input('sort'), $sortable) ? $request->input('sort') : null;
+        $dir  = $request->input('dir') === 'desc' ? 'desc' : 'asc';
+
+        $baseQuery = Curso::when($qs, fn($q) => $q->where('titulo', 'like', $qs)->orWhere('local', 'like', $qs));
+
+        if ($sort) {
+            $baseQuery->orderBy($sort, $dir);
+        } else {
+            $baseQuery->orderBy('ordem')->orderBy('data_inicio');
+        }
 
         if ($qs) {
-            $cursos   = $query->get();
+            $cursos   = $baseQuery->get();
             $proximos = collect();
             $passados = collect();
         } else {
             $cursos   = collect();
-            $proximos = (clone $query)->whereDate('data_fim', '>=', now()->toDateString())->get();
-            $passados = (clone $query)->whereDate('data_fim', '<', now()->toDateString())->orderByDesc('data_fim')->paginate(10);
+            $proximos = (clone $baseQuery)->whereDate('data_fim', '>=', now()->toDateString())->get();
+            $passados = (clone $baseQuery)->whereDate('data_fim', '<', now()->toDateString())
+                ->when(!$sort, fn($q) => $q->reorder()->orderByDesc('data_fim'))
+                ->paginate(10)->withQueryString();
         }
 
-        return view('admin.cursos.index', compact('cursos', 'proximos', 'passados', 'q'));
+        return view('admin.cursos.index', compact('cursos', 'proximos', 'passados', 'q', 'sort', 'dir'));
     }
 
     public function adminCreate()

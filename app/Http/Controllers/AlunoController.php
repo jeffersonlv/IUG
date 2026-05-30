@@ -17,13 +17,17 @@ class AlunoController extends Controller
     {
         $q = $request->input('q');
         $qs = $q ? '%' . str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $q) . '%' : null;
+        $sortable = ['nome_completo', 'cidade', 'estado'];
+        $sort = in_array($request->input('sort'), $sortable) ? $request->input('sort') : 'nome_completo';
+        $dir  = $request->input('dir') === 'desc' ? 'desc' : 'asc';
+
         $alunos = Aluno::when($qs, fn($query) => $query->where('nome_completo', 'like', $qs)
                 ->orWhere('cidade', 'like', $qs)
                 ->orWhere('estado', 'like', $qs))
-            ->orderBy('nome_completo')
+            ->orderBy($sort, $dir)
             ->paginate(20)
             ->withQueryString();
-        return view('admin.alunos.index', compact('alunos', 'q'));
+        return view('admin.alunos.index', compact('alunos', 'q', 'sort', 'dir'));
     }
 
     public function adminCreate()

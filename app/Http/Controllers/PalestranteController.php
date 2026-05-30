@@ -12,9 +12,13 @@ class PalestranteController extends Controller
     {
         $q = $request->input('q');
         $qs = $q ? '%' . str_replace(['%', '_', '\\'], ['\\%', '\\_', '\\\\'], $q) . '%' : null;
+        $sortable = ['nome', 'ativo'];
+        $sort = in_array($request->input('sort'), $sortable) ? $request->input('sort') : 'nome';
+        $dir  = $request->input('dir') === 'desc' ? 'desc' : 'asc';
+
         $palestrantes = Palestrante::when($qs, fn($query) => $query->where('nome', 'like', $qs)->orWhere('descricao', 'like', $qs))
-            ->orderBy('nome')->paginate(15)->withQueryString();
-        return view('admin.palestrantes.index', compact('palestrantes', 'q'));
+            ->orderBy($sort, $dir)->paginate(15)->withQueryString();
+        return view('admin.palestrantes.index', compact('palestrantes', 'q', 'sort', 'dir'));
     }
 
     public function adminCreate()

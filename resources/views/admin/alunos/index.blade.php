@@ -23,10 +23,22 @@
 
 <div class="card">
     <table class="table mb-0">
+        @php
+            function alunoSortUrl($col, $sort, $dir) {
+                return request()->fullUrlWithQuery(['sort' => $col, 'dir' => ($sort === $col && $dir === 'asc') ? 'desc' : 'asc']);
+            }
+            function alunoSortIcon($col, $sort, $dir) {
+                return $sort === $col ? ($dir === 'asc' ? ' ▲' : ' ▼') : ' ⇅';
+            }
+        @endphp
         <thead>
             <tr>
-                <th>Nome Completo</th>
-                <th>Cidade / Estado</th>
+                <th><a href="{{ alunoSortUrl('nome_completo', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Nome Completo{!! alunoSortIcon('nome_completo', $sort, $dir) !!}</a></th>
+                <th>
+                    <a href="{{ alunoSortUrl('cidade', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Cidade{!! alunoSortIcon('cidade', $sort, $dir) !!}</a>
+                    /
+                    <a href="{{ alunoSortUrl('estado', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Estado{!! alunoSortIcon('estado', $sort, $dir) !!}</a>
+                </th>
                 <th>Cursos</th>
                 <th style="width:140px;">Ações</th>
             </tr>
