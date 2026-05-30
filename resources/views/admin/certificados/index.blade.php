@@ -8,11 +8,12 @@
 </div>
 
 @php
+$_meses = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 $cursosJson = $cursos->map(fn($c) => [
     'id'         => $c->id,
     'slug'       => \Str::slug($c->titulo . '-' . $c->id),
     'titulo'     => $c->titulo,
-    'data'       => $c->data_inicio->format('d') . ' a ' . $c->data_fim->format('d \d\e F \d\e Y'),
+    'data'       => $c->data_inicio->format('d') . ' a ' . $c->data_fim->format('d') . ' de ' . $_meses[$c->data_fim->month - 1] . ' de ' . $c->data_fim->year,
     'cidade'     => $c->local,
     'topico'     => $c->topicos ?? '',
     'alunos_raw' => $c->alunos->map(fn($a) =>

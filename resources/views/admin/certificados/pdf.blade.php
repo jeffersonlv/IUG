@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <style>
+        @page { margin: 0; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
