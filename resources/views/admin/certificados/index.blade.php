@@ -127,7 +127,7 @@ $cursosJson = $cursos->map(fn($c) => [
 #certPreview .data   { text-align: center; position: relative; top: 350px; }
 #certPreview .topico { text-align: justify; position: relative; top: 385px; margin: 0 57px !important; font-size: 1em; }
 #certPreview .participante {
-    position: absolute; bottom: 36px; left: 140px;
+    position: absolute; bottom: 50px; left: 140px;
     border-top: 3px solid #000; width: 260px;
     text-align: center; padding-top: 5px; font-weight: bold; font-size: 0.75em;
     white-space: nowrap;

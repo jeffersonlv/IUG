@@ -59,7 +59,7 @@
 
         .participante {
             position: absolute;
-            bottom: 9.5mm;
+            bottom: 13mm;
             left: 37mm;
             border-top: 3px solid #000;
             width: 68mm;
