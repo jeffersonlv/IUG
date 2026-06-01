@@ -91,5 +91,7 @@
         <img class="assinatura" src="{{ asset('images/assinatura.png') }}" />
     </section>
 </body>
-<script>window.print();</script>
+<script>
+if (!new URLSearchParams(location.search).has('capture')) window.print();
+</script>
 </html>

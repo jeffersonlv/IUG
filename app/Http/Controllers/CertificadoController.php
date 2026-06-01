@@ -107,6 +107,28 @@ class CertificadoController extends Controller
         ]);
     }
 
+    public function uploadPdf(Request $request)
+    {
+        $request->validate([
+            'pdf_base64'  => 'required|string',
+            'filename'    => 'required|string|max:300',
+            'curso_slug'  => 'required|string|max:200',
+        ]);
+
+        $cursoSlug = $this->slug($request->curso_slug);
+        $filename  = $this->slug(pathinfo($request->filename, PATHINFO_FILENAME)) . '.pdf';
+        $caminho   = "public/certificados/{$cursoSlug}/{$filename}";
+
+        $base64 = preg_replace('/^data:application\/pdf;base64,/', '', $request->pdf_base64);
+        Storage::put($caminho, base64_decode($base64));
+
+        return response()->json([
+            'ok'           => true,
+            'arquivo'      => $caminho,
+            'url_download' => route('admin.certificados.download', ['file' => $caminho]),
+        ]);
+    }
+
     public function download(Request $request)
     {
         $file = $request->query('file');

@@ -97,12 +97,14 @@ $cursosJson = $cursos->map(fn($c) => [
     </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-const cursosData = @json($cursosJson);
-const salvarUrl  = "{{ route('admin.certificados.salvar') }}";
+const cursosData  = @json($cursosJson);
 const imprimirUrl = "{{ route('admin.certificados.imprimir') }}";
-const zipUrl     = "{{ route('admin.certificados.zip') }}";
-const csrfToken  = "{{ csrf_token() }}";
+const uploadUrl   = "{{ route('admin.certificados.uploadPdf') }}";
+const zipUrl      = "{{ route('admin.certificados.zip') }}";
+const csrfToken   = "{{ csrf_token() }}";
 
 // Restaurar downloads após reload
 (function() {
@@ -141,6 +143,41 @@ function parsearAlunos() {
         .filter(a => a.nome !== '');
 }
 
+function capturarCertificadoPDF(url) {
+    return new Promise((resolve, reject) => {
+        const iframe = document.createElement('iframe');
+        iframe.style.cssText = 'position:fixed;left:-9999px;top:0;width:297mm;height:210mm;border:none;visibility:hidden;';
+        document.body.appendChild(iframe);
+
+        iframe.onload = async () => {
+            try {
+                await new Promise(r => setTimeout(r, 600)); // aguarda render de imagens
+                const sheet = iframe.contentDocument.querySelector('.sheet');
+                const canvas = await html2canvas(sheet, {
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: false,
+                    logging: false,
+                    width: sheet.scrollWidth,
+                    height: sheet.scrollHeight,
+                });
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+                pdf.addImage(imgData, 'JPEG', 0, 0, 297, 210);
+                resolve(pdf.output('datauristring'));
+            } catch (e) {
+                reject(e);
+            } finally {
+                document.body.removeChild(iframe);
+            }
+        };
+
+        iframe.onerror = () => { document.body.removeChild(iframe); reject(new Error('Erro ao carregar certificado.')); };
+        iframe.src = url;
+    });
+}
+
 async function gerarESalvar() {
     const titulo = document.getElementById('titulo').value.trim();
     const data   = document.getElementById('data').value.trim();
@@ -155,38 +192,63 @@ async function gerarESalvar() {
         ? cursosData[document.getElementById('cursoSelect').value]?.slug
         : titulo.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
 
-    document.getElementById('btnSalvarTxt').textContent = 'Gerando...';
-    document.getElementById('btnSalvarLoad').classList.remove('d-none');
-    document.getElementById('btnSalvar').disabled = true;
+    const btnTxt  = document.getElementById('btnSalvarTxt');
+    const btnLoad = document.getElementById('btnSalvarLoad');
+    const btn     = document.getElementById('btnSalvar');
+    btn.disabled  = true;
+    btnLoad.classList.remove('d-none');
     document.getElementById('downloadPanel').classList.add('d-none');
     document.getElementById('erroPanel').classList.add('d-none');
 
+    const gerados = [];
+
     try {
-        const resp = await fetch(salvarUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken,
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify({ titulo, data, cidade, topico, curso_slug: cursoSlug, alunos }),
-        });
+        for (let i = 0; i < alunos.length; i++) {
+            const a = alunos[i];
+            btnTxt.textContent = `Gerando ${i + 1}/${alunos.length}…`;
 
-        const json = await resp.json();
+            const url = imprimirUrl
+                + '?capture=1'
+                + '&nome='   + encodeURIComponent(a.nome)
+                + '&titulo=' + encodeURIComponent(titulo)
+                + '&data='   + encodeURIComponent(data)
+                + '&cidade=' + encodeURIComponent(cidade)
+                + '&topico=' + encodeURIComponent(topico);
 
-        if (!resp.ok || !json.ok) {
-            throw new Error(json.message || 'Erro ao gerar certificados.');
+            const pdfBase64 = await capturarCertificadoPDF(url);
+
+            const locSlug = [a.estado_aluno, a.cidade_aluno, a.nome]
+                .filter(Boolean).join('_')
+                .toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+            const filename = locSlug + '.pdf';
+
+            const resp = await fetch(uploadUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
+                body: JSON.stringify({ pdf_base64: pdfBase64, filename, curso_slug: cursoSlug }),
+            });
+
+            const json = await resp.json();
+            if (!resp.ok || !json.ok) throw new Error(json.message || 'Erro ao salvar PDF.');
+
+            gerados.push({
+                nome:         a.nome,
+                cidade_aluno: a.cidade_aluno,
+                estado_aluno: a.estado_aluno,
+                arquivo:      json.arquivo,
+                url_download: json.url_download,
+            });
         }
 
-        mostrarDownloads(json);
+        mostrarDownloads({ curso_slug: cursoSlug, gerados });
 
     } catch (e) {
         document.getElementById('erroPanel').classList.remove('d-none');
         document.getElementById('erroMsg').textContent = e.message;
     } finally {
-        document.getElementById('btnSalvarTxt').textContent = 'Gerar e Salvar PDFs';
-        document.getElementById('btnSalvarLoad').classList.add('d-none');
-        document.getElementById('btnSalvar').disabled = false;
+        btnTxt.textContent = 'Gerar e Salvar PDFs';
+        btnLoad.classList.add('d-none');
+        btn.disabled = false;
     }
 }
 
