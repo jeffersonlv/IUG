@@ -98,68 +98,60 @@ $cursosJson = $cursos->map(fn($c) => [
 </div>
 
 <style>
+/* Replica paper-css A4 landscape @ 96dpi com padding-10mm */
 #certPreview {
     position: fixed; left: -9999px; top: 0;
-    width: 1123px; height: 794px; /* A4 landscape @ 96dpi */
+    width: 1123px; height: 794px;
     overflow: hidden;
-    font-family: Arial, Helvetica, sans-serif;
     background: #fff;
 }
 #certPreview .cert-wrap {
     position: relative;
     width: 1123px; height: 794px;
+    padding: 38px; /* 10mm @ 96dpi */
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 19.2px; /* 1.2em base (paper-css 16px × 1.2) */
     overflow: hidden;
 }
 #certPreview .cert-bg {
     position: absolute; top: 0; left: 0;
     width: 100%; height: 100%;
     object-fit: contain; object-position: center bottom;
-    display: block;
+    display: block; z-index: 0;
 }
-#certPreview .cert-body {
-    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    padding: 76px 83px 106px;
-    gap: 19px;
-    text-align: center;
+#certPreview .cert-content { position: relative; z-index: 1; }
+#certPreview .divcentro { margin: 0 auto; }
+#certPreview .nome   { text-align: center; position: relative; top: 288px; }
+#certPreview .titulo { text-align: center; position: relative; top: 324px; font-size: 1.3em; font-style: italic; font-weight: bold; }
+#certPreview .data   { text-align: center; position: relative; top: 350px; }
+#certPreview .topico { text-align: justify; position: relative; top: 385px; margin: 0 140px !important; font-size: 1em; }
+#certPreview .participante {
+    position: relative; top: 481px; left: 140px;
+    border-top: 3px solid #000; width: 295px;
+    text-align: center; padding-top: 5px; font-weight: bold; font-size: 0.75em;
 }
-#certPreview .c-intro  { font-size: 16px; line-height: 1.5; }
-#certPreview .c-titulo { font-size: 17px; font-weight: bold; line-height: 1.4; }
-#certPreview .c-data   { font-size: 15px; line-height: 1.5; }
-#certPreview .c-topico { font-size: 12px; text-align: justify; line-height: 1.5; width: 100%; }
-#certPreview .cert-footer {
-    position: absolute; bottom: 45px; left: 83px; right: 83px;
-    display: flex; align-items: flex-end; justify-content: space-between;
+#certPreview .instituto {
+    position: relative; top: 456px; right: 140px;
+    border-top: 3px solid #000; width: 295px;
+    text-align: center; padding-top: 5px; font-weight: bold; float: right; font-size: 0.75em;
 }
-#certPreview .cert-ass-block {
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
-}
-#certPreview .cert-ass-block img { height: 53px; object-fit: contain; }
-#certPreview .cert-line {
-    border-top: 2px solid #000; padding-top: 5px;
-    text-align: center; font-size: 9px; font-weight: bold;
-    width: 208px;
+#certPreview .assinatura {
+    position: relative; top: 392px; left: 672px; width: 18%;
 }
 </style>
 
 <div id="certPreview">
     <div class="cert-wrap">
         <img class="cert-bg" id="certBg" src="" />
-        <div class="cert-body">
-            <div class="c-intro"  id="certNome"></div>
-            <div class="c-titulo" id="certTitulo"></div>
-            <div class="c-data"   id="certData"></div>
-            <div class="c-topico" id="certTopico"></div>
-        </div>
-        <div class="cert-footer">
-            <div class="cert-ass-block">
-                <div class="cert-line">Participante</div>
-            </div>
-            <div class="cert-ass-block">
-                <img id="certAss" src="" />
-                <div class="cert-line">Instituto Ulysses Guimarães LTDA<br>CNPJ: 40.033.708/0001-63</div>
-            </div>
+        <div class="cert-content">
+            <div class="divcentro nome"  id="certNome"></div>
+            <div class="divcentro titulo" id="certTitulo"></div>
+            <div class="divcentro data"   id="certData"></div>
+            <div class="divcentro topico" id="certTopico"></div>
+            <div class="participante">Participante</div>
+            <div class="instituto">Instituto Ulysses Guimarães LTDA<br>CNPJ: 40.033.708/0001-63</div>
+            <img class="assinatura" id="certAss" src="" />
         </div>
     </div>
 </div>
@@ -225,9 +217,9 @@ async function aguardarImagem(img) {
 }
 
 async function capturarCertificadoPDF(aluno, titulo, data, cidade, topico) {
-    document.getElementById('certNome').innerHTML    = 'Certificamos que <b>' + aluno.nome + '</b> participou do curso';
-    document.getElementById('certTitulo').textContent = '"' + titulo + '"';
-    document.getElementById('certData').innerHTML    = 'Realizado nos dias <b>' + data + '</b>, na cidade de <b>' + cidade + '</b>.';
+    document.getElementById('certNome').innerHTML   = 'Certificamos que <b>' + aluno.nome + '</b> participou do curso';
+    document.getElementById('certTitulo').textContent = '“' + titulo + '”';
+    document.getElementById('certData').innerHTML   = 'Realizado nos dias <b>' + data + '</b>, na cidade de <b>' + cidade + '</b>.';
     const topicoEl = document.getElementById('certTopico');
     if (topico) { topicoEl.innerHTML = '<b>TÓPICOS: </b>' + topico; topicoEl.style.display = ''; }
     else         { topicoEl.innerHTML = ''; topicoEl.style.display = 'none'; }

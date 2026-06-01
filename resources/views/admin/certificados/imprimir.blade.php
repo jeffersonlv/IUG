@@ -3,25 +3,12 @@
 <head>
     <meta charset="utf-8">
     <title>Certificado — {{ $nome }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.4.1/paper.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        @page { size: A4 landscape }
 
-        @page { size: A4 landscape; margin: 0; }
-
-        html, body {
-            width: 297mm;
-            height: 210mm;
-            overflow: hidden;
-            background: #fff;
-        }
-
-        .cert {
-            position: relative;
-            width: 297mm;
-            height: 210mm;
-            font-family: Arial, Helvetica, sans-serif;
-            overflow: hidden;
-        }
+        .sheet { position: relative; overflow: hidden; }
 
         .cert-bg {
             position: absolute;
@@ -30,100 +17,99 @@
             object-fit: contain;
             object-position: center bottom;
             display: block;
+            z-index: 0;
         }
 
-        .cert-body {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20mm 22mm 28mm;
-            gap: 5mm;
+        .cert-content { position: relative; z-index: 1; }
+
+        .fundo {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 1.2em;
+        }
+
+        .divcentro { margin: 0 auto; }
+
+        .nome {
             text-align: center;
+            position: relative;
+            top: 288px;
         }
 
-        .cert-intro {
-            font-size: 12pt;
-            line-height: 1.5;
-        }
-
-        .cert-titulo {
-            font-size: 13pt;
+        .titulo {
+            text-align: center;
+            position: relative;
+            top: 324px;
+            font-size: 1.3em;
+            font-style: italic;
             font-weight: bold;
-            line-height: 1.4;
         }
 
-        .cert-data {
-            font-size: 11pt;
-            line-height: 1.5;
+        .data {
+            text-align: center;
+            position: relative;
+            top: 350px;
         }
 
-        .cert-topico {
-            font-size: 9.5pt;
+        .topico {
             text-align: justify;
-            line-height: 1.5;
-            margin-top: 2mm;
+            position: relative;
+            top: 385px;
+            margin: auto 140px !important;
+            font-size: 1em;
         }
 
-        .cert-footer {
-            position: absolute;
-            bottom: 12mm;
-            left: 22mm;
-            right: 22mm;
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-        }
-
-        .cert-ass-block {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2mm;
-        }
-
-        .cert-ass-block img {
-            height: 14mm;
-            object-fit: contain;
-        }
-
-        .cert-line {
-            border-top: 2px solid #000;
-            padding-top: 1.5mm;
+        .participante {
+            position: relative;
+            top: 481px;
+            left: 140px;
+            border-top: 3px solid #000;
+            width: 295px;
             text-align: center;
-            font-size: 7.5pt;
+            padding-top: 5px;
             font-weight: bold;
-            width: 55mm;
+            font-size: 0.75em;
+        }
+
+        .instituto {
+            position: relative;
+            top: 456px;
+            right: 140px;
+            border-top: 3px solid #000;
+            width: 295px;
+            text-align: center;
+            padding-top: 5px;
+            font-weight: bold;
+            float: right;
+            font-size: 0.75em;
+        }
+
+        .assinatura {
+            position: relative;
+            top: 392px;
+            left: 672px;
+            width: 18%;
         }
     </style>
 </head>
-<body>
-<div class="cert">
-    <img class="cert-bg" src="{{ asset('images/fundoCertificado.jpg') }}" />
+<body class="A4 landscape">
+    <section class="sheet padding-10mm fundo">
+        <img class="cert-bg" src="{{ asset('images/fundoCertificado.jpg') }}" />
 
-    <div class="cert-body">
-        <div class="cert-intro">Certificamos que <b>{{ $nome }}</b> participou do curso</div>
-        <div class="cert-titulo">"{{ $titulo }}"</div>
-        <div class="cert-data">Realizado nos dias <b>{{ $data }}</b>, na cidade de <b>{{ $cidade }}</b>.</div>
-        @if($topico)
-        <div class="cert-topico"><b>TÓPICOS: </b>{{ $topico }}</div>
-        @endif
-    </div>
+        <div class="cert-content">
+            <div class="divcentro nome">Certificamos que <b>{{ $nome }}</b> participou do curso</div>
+            <div class="divcentro titulo">"{{ $titulo }}"</div>
+            <div class="divcentro data">Realizado nos dias <b>{{ $data }}</b>, na cidade de <b>{{ $cidade }}</b>.</div>
+            @if($topico)
+            <div class="divcentro topico"><b>TÓPICOS: </b>{{ $topico }}</div>
+            @endif
 
-    <div class="cert-footer">
-        <div class="cert-ass-block">
-            <div class="cert-line">Participante</div>
+            <div class="participante">Participante</div>
+            <div class="instituto">Instituto Ulysses Guimarães LTDA<br>CNPJ: 40.033.708/0001-63</div>
+            <img class="assinatura" src="{{ asset('images/assinatura.png') }}" />
         </div>
-        <div class="cert-ass-block">
-            <img src="{{ asset('images/assinatura.png') }}" />
-            <div class="cert-line">Instituto Ulysses Guimarães LTDA<br>CNPJ: 40.033.708/0001-63</div>
-        </div>
-    </div>
-</div>
+    </section>
+</body>
 <script>
 if (!new URLSearchParams(location.search).has('capture')) window.print();
 </script>
-</body>
 </html>
