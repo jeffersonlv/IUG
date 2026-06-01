@@ -10,30 +10,45 @@ class AddSlugToCursosTable extends Migration
 {
     public function up()
     {
-        Schema::table('cursos', function (Blueprint $table) {
-            $table->string('slug')->nullable()->after('titulo');
-        });
+        // Adiciona coluna apenas se ainda não existir
+        if (!Schema::hasColumn('cursos', 'slug')) {
+            Schema::table('cursos', function (Blueprint $table) {
+                $table->string('slug')->nullable()->after('titulo');
+            });
+        }
 
-        // Popula slugs para cursos existentes
-        DB::table('cursos')->orderBy('id')->each(function ($curso) {
+        // Popula slugs nulos ou vazios
+        DB::table('cursos')->whereNull('slug')->orWhere('slug', '')->orderBy('id')->each(function ($curso) {
             $base = Str::slug($curso->titulo . '-' . $curso->id, '-');
             $str  = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $base);
             $str  = preg_replace('/[^a-zA-Z0-9\s_-]/', '', $str);
             $str  = trim(preg_replace('/[\s_-]+/', '_', $str), '_');
-            $slug = strtolower($str);
-            DB::table('cursos')->where('id', $curso->id)->update(['slug' => $slug]);
+            DB::table('cursos')->where('id', $curso->id)->update(['slug' => strtolower($str)]);
         });
 
-        // Torna NOT NULL e adiciona índice único via SQL direto (sem doctrine/dbal)
+        // NOT NULL via SQL direto
         DB::statement('ALTER TABLE cursos MODIFY COLUMN slug VARCHAR(255) NOT NULL');
-        DB::statement('ALTER TABLE cursos ADD UNIQUE INDEX cursos_slug_unique (slug)');
+
+        // Unique index — ignora se já existir
+        try {
+            DB::statement('ALTER TABLE cursos ADD UNIQUE INDEX cursos_slug_unique (slug)');
+        } catch (\Exception $e) {
+            if (strpos($e->getMessage(), 'Duplicate key name') === false) {
+                throw $e;
+            }
+        }
     }
 
     public function down()
     {
-        Schema::table('cursos', function (Blueprint $table) {
-            $table->dropUnique('cursos_slug_unique');
-            $table->dropColumn('slug');
-        });
+        try {
+            DB::statement('ALTER TABLE cursos DROP INDEX cursos_slug_unique');
+        } catch (\Exception $e) {}
+
+        if (Schema::hasColumn('cursos', 'slug')) {
+            Schema::table('cursos', function (Blueprint $table) {
+                $table->dropColumn('slug');
+            });
+        }
     }
 }
