@@ -7,6 +7,69 @@
     <h1>Dashboard</h1>
 </div>
 
+{{-- ── Analytics ── --}}
+<div class="row g-3 mb-4">
+    @php
+        $statCards = [
+            ['label' => 'Hoje',    'pv' => $analytics['pv_hoje'],  'uv' => $analytics['uv_hoje']],
+            ['label' => '7 dias',  'pv' => $analytics['pv_7d'],    'uv' => $analytics['uv_7d']],
+            ['label' => '30 dias', 'pv' => $analytics['pv_30d'],   'uv' => $analytics['uv_30d']],
+        ];
+    @endphp
+    @foreach($statCards as $s)
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card p-3 text-center">
+            <div style="font-size:1.4rem; font-weight:700; color:#1A2B5F;">{{ number_format($s['pv']) }}</div>
+            <div style="font-size:0.7rem; color:#888; text-transform:uppercase; letter-spacing:.5px;">Pageviews {{ $s['label'] }}</div>
+            <div style="font-size:0.85rem; color:#E8600A; font-weight:600;">{{ number_format($s['uv']) }} <span style="font-size:0.7rem; font-weight:400; color:#888;">únicos</span></div>
+        </div>
+    </div>
+    @endforeach
+
+    {{-- Dispositivos --}}
+    <div class="col-12 col-md-4 col-lg-2">
+        <div class="card p-3 h-100">
+            <div style="font-size:0.7rem; color:#888; text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px;">Dispositivos (30d)</div>
+            @foreach(['desktop' => '🖥️', 'mobile' => '📱', 'tablet' => '📟'] as $dev => $ico)
+            <div class="d-flex justify-content-between" style="font-size:0.8rem;">
+                <span>{{ $ico }} {{ ucfirst($dev) }}</span>
+                <span class="fw-semibold">{{ $analytics['devices'][$dev] ?? 0 }}</span>
+            </div>
+            @endforeach
+        </div>
+    </div>
+
+    {{-- Top páginas --}}
+    <div class="col-12 col-lg-3">
+        <div class="card p-3 h-100">
+            <div style="font-size:0.7rem; color:#888; text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px;">Top Páginas (30d)</div>
+            @forelse($analytics['top_pages'] as $url => $total)
+            <div class="d-flex justify-content-between" style="font-size:0.78rem; margin-bottom:3px;">
+                <span class="text-truncate me-2" style="max-width:160px;" title="{{ $url }}">{{ $url }}</span>
+                <span class="fw-semibold text-nowrap">{{ number_format($total) }}</span>
+            </div>
+            @empty
+            <span class="text-muted small">Sem dados ainda.</span>
+            @endforelse
+        </div>
+    </div>
+
+    {{-- Top referrers --}}
+    <div class="col-12 col-lg-3">
+        <div class="card p-3 h-100">
+            <div style="font-size:0.7rem; color:#888; text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px;">Top Origens (30d)</div>
+            @forelse($analytics['top_referrers'] as $host => $total)
+            <div class="d-flex justify-content-between" style="font-size:0.78rem; margin-bottom:3px;">
+                <span class="text-truncate me-2" style="max-width:160px;" title="{{ $host }}">{{ $host ?: '(direto)' }}</span>
+                <span class="fw-semibold text-nowrap">{{ number_format($total) }}</span>
+            </div>
+            @empty
+            <span class="text-muted small">Sem dados ainda.</span>
+            @endforelse
+        </div>
+    </div>
+</div>
+
 <div class="row g-4">
 
     {{-- ── Timeline de Cursos ── --}}
