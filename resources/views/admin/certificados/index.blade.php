@@ -100,27 +100,27 @@ $cursosJson = $cursos->map(fn($c) => [
 <style>
 #certPreview {
     position: fixed; left: -9999px; top: 0;
-    width: 794px; height: 1123px; /* A4 portrait @ 96dpi */
+    width: 1123px; height: 794px; /* A4 landscape @ 96dpi */
     overflow: hidden;
     font-family: Arial, Helvetica, sans-serif;
     background: #fff;
 }
 #certPreview .cert-wrap {
     position: relative;
-    width: 794px; height: 1123px;
+    width: 1123px; height: 794px;
     overflow: hidden;
 }
 #certPreview .cert-bg {
     position: absolute; top: 0; left: 0;
     width: 100%; height: 100%;
-    object-fit: cover; display: block;
+    object-fit: contain; object-position: center bottom;
+    display: block;
 }
 #certPreview .cert-body {
-    position: absolute;
-    top: 42%; left: 0; right: 0;
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
     display: flex; flex-direction: column;
-    align-items: center;
-    padding: 0 68px;
+    align-items: center; justify-content: center;
+    padding: 76px 83px 106px;
     gap: 19px;
     text-align: center;
 }
@@ -129,7 +129,7 @@ $cursosJson = $cursos->map(fn($c) => [
 #certPreview .c-data   { font-size: 15px; line-height: 1.5; }
 #certPreview .c-topico { font-size: 12px; text-align: justify; line-height: 1.5; width: 100%; }
 #certPreview .cert-footer {
-    position: absolute; bottom: 68px; left: 68px; right: 68px;
+    position: absolute; bottom: 45px; left: 83px; right: 83px;
     display: flex; align-items: flex-end; justify-content: space-between;
 }
 #certPreview .cert-ass-block {
@@ -139,7 +139,7 @@ $cursosJson = $cursos->map(fn($c) => [
 #certPreview .cert-line {
     border-top: 2px solid #000; padding-top: 5px;
     text-align: center; font-size: 9px; font-weight: bold;
-    width: 189px;
+    width: 208px;
 }
 </style>
 
@@ -245,14 +245,14 @@ async function capturarCertificadoPDF(aluno, titulo, data, cidade, topico) {
         useCORS: false,
         allowTaint: true,
         logging: false,
-        width:  794,
-        height: 1123,
+        width:  1123,
+        height: 794,
     });
 
     const imgData = canvas.toDataURL('image/jpeg', 0.95);
     const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-    pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297);
+    const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    pdf.addImage(imgData, 'JPEG', 0, 0, 297, 210);
     return pdf.output('datauristring');
 }
 

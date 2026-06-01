@@ -6,19 +6,19 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        @page { size: A4 portrait; margin: 0; }
+        @page { size: A4 landscape; margin: 0; }
 
         html, body {
-            width: 210mm;
-            height: 297mm;
+            width: 297mm;
+            height: 210mm;
             overflow: hidden;
             background: #fff;
         }
 
         .cert {
             position: relative;
-            width: 210mm;
-            height: 297mm;
+            width: 297mm;
+            height: 210mm;
             font-family: Arial, Helvetica, sans-serif;
             overflow: hidden;
         }
@@ -27,19 +27,19 @@
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            object-fit: cover;
+            object-fit: contain;
+            object-position: center bottom;
             display: block;
         }
 
-        /* Conteúdo começa após o "Certificado" do fundo (~42% do topo) */
         .cert-body {
             position: absolute;
-            top: 42%;
-            left: 0; right: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 0 18mm;
+            justify-content: center;
+            padding: 20mm 22mm 28mm;
             gap: 5mm;
             text-align: center;
         }
@@ -53,7 +53,6 @@
             font-size: 13pt;
             font-weight: bold;
             line-height: 1.4;
-            margin-top: 1mm;
         }
 
         .cert-data {
@@ -70,9 +69,9 @@
 
         .cert-footer {
             position: absolute;
-            bottom: 18mm;
-            left: 18mm;
-            right: 18mm;
+            bottom: 12mm;
+            left: 22mm;
+            right: 22mm;
             display: flex;
             align-items: flex-end;
             justify-content: space-between;
@@ -96,7 +95,7 @@
             text-align: center;
             font-size: 7.5pt;
             font-weight: bold;
-            width: 50mm;
+            width: 55mm;
         }
     </style>
 </head>
@@ -107,7 +106,7 @@
     <div class="cert-body">
         <div class="cert-intro">Certificamos que <b>{{ $nome }}</b> participou do curso</div>
         <div class="cert-titulo">"{{ $titulo }}"</div>
-        <div class="cert-data">Realizado nos dias <b>{{ $data }}</b>,<br>na cidade de <b>{{ $cidade }}</b>.</div>
+        <div class="cert-data">Realizado nos dias <b>{{ $data }}</b>, na cidade de <b>{{ $cidade }}</b>.</div>
         @if($topico)
         <div class="cert-topico"><b>TÓPICOS: </b>{{ $topico }}</div>
         @endif
