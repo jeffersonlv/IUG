@@ -12,7 +12,18 @@ class CertificadoController extends Controller
     public function index()
     {
         $cursos = Curso::with('alunos')->orderBy('data_inicio', 'desc')->get();
-        return view('admin.certificados.index', compact('cursos'));
+
+        $fundoPath = public_path('images/fundoCertificado.jpg');
+        $fundoB64  = file_exists($fundoPath)
+            ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($fundoPath))
+            : '';
+
+        $assPath = public_path('images/assinatura.png');
+        $assB64  = file_exists($assPath)
+            ? 'data:image/png;base64,' . base64_encode(file_get_contents($assPath))
+            : '';
+
+        return view('admin.certificados.index', compact('cursos', 'fundoB64', 'assB64'));
     }
 
     public function imprimir(Request $request)

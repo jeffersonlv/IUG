@@ -97,14 +97,55 @@ $cursosJson = $cursos->map(fn($c) => [
     </div>
 </div>
 
+<style>
+#certPreview {
+    position: fixed; left: -9999px; top: 0;
+    width: 1123px; height: 794px; /* 297mm x 210mm @ 96dpi */
+    overflow: hidden;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1.2em;
+}
+#certPreview .fundo {
+    width: 1123px; height: 794px;
+    background-size: cover; background-position: center; background-repeat: no-repeat;
+    position: relative;
+}
+#certPreview .divcentro { margin: 0 auto; }
+#certPreview .nome   { text-align: center; position: absolute; top: 348px; width: 100%; }
+#certPreview .titulo { text-align: center; position: absolute; top: 390px; width: 100%; font-size: 1.3em; font-style: italic; font-weight: bold; }
+#certPreview .data   { text-align: center; position: absolute; top: 422px; width: 100%; }
+#certPreview .topico { text-align: justify; position: absolute; top: 464px; left: 168px; right: 168px; font-size: 1em; }
+#certPreview .participante { position: absolute; bottom: 60px; left: 168px; border-top: 3px solid #000; width: 295px; text-align: center; padding-top: 5px; font-weight: bold; font-size: 0.75em; }
+#certPreview .instituto    { position: absolute; bottom: 60px; right: 168px; border-top: 3px solid #000; width: 295px; text-align: center; padding-top: 5px; font-weight: bold; font-size: 0.75em; }
+#certPreview .assinatura   { position: absolute; bottom: 68px; right: 295px; width: 200px; }
+</style>
+
+<div id="certPreview">
+    <div class="fundo" id="certFundo">
+        <div class="divcentro nome"  id="certNome"></div>
+        <div class="divcentro titulo" id="certTitulo"></div>
+        <div class="divcentro data"   id="certData"></div>
+        <div class="divcentro topico" id="certTopico"></div>
+        <div class="participante">Participante</div>
+        <div class="instituto">Instituto Ulysses Guimarães LTDA<br>CNPJ: 40.033.708/0001-63</div>
+        <img class="assinatura" id="certAss" src="" />
+    </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 const cursosData  = @json($cursosJson);
-const imprimirUrl = "{{ route('admin.certificados.imprimir') }}";
+const fundoB64    = @json($fundoB64);
+const assB64      = @json($assB64);
 const uploadUrl   = "{{ route('admin.certificados.uploadPdf') }}";
+const imprimirUrl = "{{ route('admin.certificados.imprimir') }}";
 const zipUrl      = "{{ route('admin.certificados.zip') }}";
 const csrfToken   = "{{ csrf_token() }}";
+
+// Pré-carrega imagens no preview oculto
+document.getElementById('certFundo').style.backgroundImage = `url('${fundoB64}')`;
+document.getElementById('certAss').src = assB64;
 
 // Restaurar downloads após reload
 (function() {
@@ -143,39 +184,33 @@ function parsearAlunos() {
         .filter(a => a.nome !== '');
 }
 
-function capturarCertificadoPDF(url) {
-    return new Promise((resolve, reject) => {
-        const iframe = document.createElement('iframe');
-        iframe.style.cssText = 'position:fixed;left:-9999px;top:0;width:297mm;height:210mm;border:none;visibility:hidden;';
-        document.body.appendChild(iframe);
+async function capturarCertificadoPDF(aluno, titulo, data, cidade, topico) {
+    // Preenche o div oculto com dados do aluno
+    document.getElementById('certNome').innerHTML   = 'Certificamos que <b>' + aluno.nome + '</b> participou do curso';
+    document.getElementById('certTitulo').textContent = '"' + titulo + '"';
+    document.getElementById('certData').innerHTML   = 'Realizado nos dias <b>' + data + '</b>, na cidade de <b>' + cidade + '</b>.';
+    const topicoEl = document.getElementById('certTopico');
+    if (topico) { topicoEl.innerHTML = '<b>TÓPICOS: </b>' + topico; topicoEl.style.display = ''; }
+    else         { topicoEl.innerHTML = ''; topicoEl.style.display = 'none'; }
 
-        iframe.onload = async () => {
-            try {
-                await new Promise(r => setTimeout(r, 600)); // aguarda render de imagens
-                const sheet = iframe.contentDocument.querySelector('.sheet');
-                const canvas = await html2canvas(sheet, {
-                    scale: 2,
-                    useCORS: true,
-                    allowTaint: false,
-                    logging: false,
-                    width: sheet.scrollWidth,
-                    height: sheet.scrollHeight,
-                });
-                const imgData = canvas.toDataURL('image/jpeg', 0.95);
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-                pdf.addImage(imgData, 'JPEG', 0, 0, 297, 210);
-                resolve(pdf.output('datauristring'));
-            } catch (e) {
-                reject(e);
-            } finally {
-                document.body.removeChild(iframe);
-            }
-        };
+    // Aguarda repaint
+    await new Promise(r => setTimeout(r, 100));
 
-        iframe.onerror = () => { document.body.removeChild(iframe); reject(new Error('Erro ao carregar certificado.')); };
-        iframe.src = url;
+    const el = document.getElementById('certPreview');
+    const canvas = await html2canvas(el, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+        width:  1123,
+        height: 794,
     });
+
+    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    pdf.addImage(imgData, 'JPEG', 0, 0, 297, 210);
+    return pdf.output('datauristring');
 }
 
 async function gerarESalvar() {
@@ -207,15 +242,7 @@ async function gerarESalvar() {
             const a = alunos[i];
             btnTxt.textContent = `Gerando ${i + 1}/${alunos.length}…`;
 
-            const url = imprimirUrl
-                + '?capture=1'
-                + '&nome='   + encodeURIComponent(a.nome)
-                + '&titulo=' + encodeURIComponent(titulo)
-                + '&data='   + encodeURIComponent(data)
-                + '&cidade=' + encodeURIComponent(cidade)
-                + '&topico=' + encodeURIComponent(topico);
-
-            const pdfBase64 = await capturarCertificadoPDF(url);
+            const pdfBase64 = await capturarCertificadoPDF(a, titulo, data, cidade, topico);
 
             const locSlug = [a.estado_aluno, a.cidade_aluno, a.nome]
                 .filter(Boolean).join('_')
