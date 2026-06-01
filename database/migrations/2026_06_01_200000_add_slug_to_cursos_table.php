@@ -16,24 +16,23 @@ class AddSlugToCursosTable extends Migration
 
         // Popula slugs para cursos existentes
         DB::table('cursos')->orderBy('id')->each(function ($curso) {
-            $slug = strtolower(preg_replace(
-                '/[\s_-]+/', '_',
-                trim(preg_replace(
-                    '/[^a-zA-Z0-9\s_-]/', '',
-                    iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', Str::slug($curso->titulo . '-' . $curso->id, '-'))
-                ), '_')
-            ));
+            $base = Str::slug($curso->titulo . '-' . $curso->id, '-');
+            $str  = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $base);
+            $str  = preg_replace('/[^a-zA-Z0-9\s_-]/', '', $str);
+            $str  = trim(preg_replace('/[\s_-]+/', '_', $str), '_');
+            $slug = strtolower($str);
             DB::table('cursos')->where('id', $curso->id)->update(['slug' => $slug]);
         });
 
-        Schema::table('cursos', function (Blueprint $table) {
-            $table->string('slug')->nullable(false)->unique()->change();
-        });
+        // Torna NOT NULL e adiciona índice único via SQL direto (sem doctrine/dbal)
+        DB::statement('ALTER TABLE cursos MODIFY COLUMN slug VARCHAR(255) NOT NULL');
+        DB::statement('ALTER TABLE cursos ADD UNIQUE INDEX cursos_slug_unique (slug)');
     }
 
     public function down()
     {
         Schema::table('cursos', function (Blueprint $table) {
+            $table->dropUnique('cursos_slug_unique');
             $table->dropColumn('slug');
         });
     }
