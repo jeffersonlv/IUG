@@ -96,7 +96,7 @@ $cursosJson = $cursos->map(fn($c) => [
                     <span id="downloadInfo" class="text-muted" style="font-size:0.875rem;"></span>
                     <div class="d-flex gap-2" id="btnsBatch"></div>
                 </div>
-                <div id="listaDownloads"></div>
+                <div id="listaDownloads" style="max-height:400px; overflow-y:auto;"></div>
             </div>
         </div>
     </div>

@@ -158,8 +158,9 @@ class CertificadoController extends Controller
             abort(404);
         }
 
-        // Impedir path traversal
-        if (strpos($file, 'public/certificados/') !== 0) {
+        $root = realpath(Storage::path('public/certificados'));
+        $real = realpath(Storage::path($file));
+        if (!$real || !$root || strpos($real, $root . DIRECTORY_SEPARATOR) !== 0) {
             abort(403);
         }
 
@@ -214,13 +215,20 @@ class CertificadoController extends Controller
             $arquivos = collect(Storage::files($pasta))->filter(fn($f) => substr($f, -4) === '.pdf');
             if ($arquivos->isEmpty()) continue;
 
-            $ultimo = $arquivos->map(fn($f) => Storage::lastModified($f))->max();
+            $ultimo = $arquivos->map(function ($f) {
+                try {
+                    return Storage::lastModified($f);
+                } catch (\Throwable $e) {
+                    return 0;
+                }
+            })->max();
 
             $lotes[] = [
-                'slug'    => basename($pasta),
-                'total'   => $arquivos->count(),
-                'gerado'  => date('d/m/Y H:i', $ultimo),
-                'arquivos'=> $arquivos->map(fn($f) => [
+                'slug'      => basename($pasta),
+                'total'     => $arquivos->count(),
+                'gerado'    => date('d/m/Y H:i', $ultimo),
+                'timestamp' => $ultimo,
+                'arquivos'  => $arquivos->map(fn($f) => [
                     'nome'         => pathinfo($f, PATHINFO_FILENAME),
                     'arquivo'      => $f,
                     'url_download' => route('admin.certificados.download', ['file' => $f]),
@@ -228,7 +236,7 @@ class CertificadoController extends Controller
             ];
         }
 
-        usort($lotes, fn($a, $b) => strcmp($b['gerado'], $a['gerado']));
+        usort($lotes, fn($a, $b) => $b['timestamp'] - $a['timestamp']);
 
         return response()->json($lotes);
     }
@@ -237,7 +245,9 @@ class CertificadoController extends Controller
     {
         $file = $request->input('file');
 
-        if (!$file || strpos($file, 'public/certificados/') !== 0) {
+        $root = realpath(Storage::path('public/certificados'));
+        $real = realpath(Storage::path($file));
+        if (!$file || !$real || !$root || strpos($real, $root . DIRECTORY_SEPARATOR) !== 0) {
             abort(403);
         }
 
