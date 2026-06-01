@@ -100,11 +100,11 @@
             @if($topico)
             <div class="divcentro topico"><b>TÓPICOS: </b>{{ $topico }}</div>
             @endif
-
-            <div class="participante">Participante</div>
-            <div class="instituto">Instituto Ulysses Guimarães LTDA<br>CNPJ: 40.033.708/0001-63</div>
-            <img class="assinatura" src="{{ asset('images/assinatura.png') }}" />
         </div>
+
+        <div class="participante">Participante</div>
+        <div class="instituto">Instituto Ulysses Guimarães LTDA<br>CNPJ: 40.033.708/0001-63</div>
+        <img class="assinatura" src="{{ asset('images/assinatura.png') }}" />
     </section>
 </body>
 <script>

@@ -145,14 +145,15 @@ $cursosJson = $cursos->map(fn($c) => [
     <div class="cert-wrap">
         <img class="cert-bg" id="certBg" src="" />
         <div class="cert-content">
-            <div class="divcentro nome"  id="certNome"></div>
+            <div class="divcentro nome"   id="certNome"></div>
             <div class="divcentro titulo" id="certTitulo"></div>
             <div class="divcentro data"   id="certData"></div>
             <div class="divcentro topico" id="certTopico"></div>
-            <div class="participante">Participante</div>
-            <div class="instituto">Instituto Ulysses Guimarães LTDA<br>CNPJ: 40.033.708/0001-63</div>
-            <img class="assinatura" id="certAss" src="" />
         </div>
+
+        <div class="participante">Participante</div>
+        <div class="instituto">Instituto Ulysses Guimarães LTDA<br>CNPJ: 40.033.708/0001-63</div>
+        <img class="assinatura" id="certAss" src="" />
     </div>
 </div>
 
