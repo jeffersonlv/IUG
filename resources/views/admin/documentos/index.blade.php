@@ -25,6 +25,7 @@
         <thead>
             <tr>
                 <th><a href="{{ docSortUrl('nome', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Nome{!! docSortIcon('nome', $sort, $dir) !!}</a></th>
+                <th>Empresa</th>
                 <th><a href="{{ docSortUrl('data_vencimento', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Vencimento{!! docSortIcon('data_vencimento', $sort, $dir) !!}</a></th>
                 <th><a href="{{ docSortUrl('ativo', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Ativo{!! docSortIcon('ativo', $sort, $dir) !!}</a></th>
                 <th style="width:80px; text-align:center;">Downloads</th>
@@ -40,6 +41,7 @@
                         <span class="badge bg-danger ms-1">Vencido</span>
                     @endif
                 </td>
+                <td class="text-muted" style="font-size:0.875rem;">{{ $doc->empresa->nome ?? '-' }}</td>
                 <td>
                     @if($doc->data_vencimento)
                         @php $dias = now()->startOfDay()->diffInDays($doc->data_vencimento->startOfDay(), false); @endphp
@@ -80,7 +82,7 @@
                 </td>
             </tr>
         @empty
-            <tr><td colspan="3" class="text-center text-muted py-4">Nenhum documento cadastrado.</td></tr>
+            <tr><td colspan="6" class="text-center text-muted py-4">Nenhum documento cadastrado.</td></tr>
         @endforelse
         </tbody>
     </table>

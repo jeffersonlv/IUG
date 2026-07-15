@@ -37,11 +37,16 @@ class Curso extends Model
     }
 
     protected $fillable = [
-        'titulo', 'slug', 'numero_seminario', 'data_inicio', 'data_fim', 'local',
+        'empresa_id', 'titulo', 'slug', 'numero_seminario', 'data_inicio', 'data_fim', 'local',
         'investimento', 'carga_horaria', 'publico_alvo',
         'programacao', 'folder_palestrantes',
         'topicos', 'arquivo_pdf', 'flyer_principal', 'folder_pdf', 'flyer_downloads', 'ativo', 'ordem',
     ];
+
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class);
+    }
 
     public function alunos()
     {

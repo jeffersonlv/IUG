@@ -33,6 +33,7 @@
     <table class="table mb-0">
         <thead><tr>
             <th><a href="{{ cursoSortUrl('titulo', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Título{!! cursoSortIcon('titulo', $sort, $dir) !!}</a></th>
+            <th>Empresa</th>
             <th><a href="{{ cursoSortUrl('data_inicio', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Data Início{!! cursoSortIcon('data_inicio', $sort, $dir) !!}</a></th>
             <th><a href="{{ cursoSortUrl('local', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Local{!! cursoSortIcon('local', $sort, $dir) !!}</a></th>
             <th>Status</th><th>Ativo</th><th style="width:70px; text-align:center;">Flyer DL</th><th style="width:140px;">Ações</th>
@@ -41,6 +42,7 @@
         @forelse($cursos as $curso)
             <tr @if($curso->data_fim->isPast()) style="opacity:0.65;" @endif>
                 <td class="fw-semibold">{{ $curso->titulo }}</td>
+                <td class="text-muted" style="font-size:0.875rem;">{{ $curso->empresa->nome ?? '-' }}</td>
                 <td>{{ $curso->data_inicio->format('d/m/Y') }}</td>
                 <td>{{ $curso->local }}</td>
                 <td>
@@ -65,7 +67,7 @@
                 </td>
             </tr>
         @empty
-            <tr><td colspan="7" class="text-center text-muted py-4">Nenhum curso encontrado.</td></tr>
+            <tr><td colspan="8" class="text-center text-muted py-4">Nenhum curso encontrado.</td></tr>
         @endforelse
         </tbody>
     </table>
@@ -79,6 +81,7 @@
     <table class="table mb-0">
         <thead><tr>
             <th><a href="{{ cursoSortUrl('titulo', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Título{!! cursoSortIcon('titulo', $sort, $dir) !!}</a></th>
+            <th>Empresa</th>
             <th><a href="{{ cursoSortUrl('data_inicio', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Data Início{!! cursoSortIcon('data_inicio', $sort, $dir) !!}</a></th>
             <th><a href="{{ cursoSortUrl('local', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Local{!! cursoSortIcon('local', $sort, $dir) !!}</a></th>
             <th>Status</th><th>Ativo</th><th style="width:70px; text-align:center;">Flyer DL</th><th style="width:140px;">Ações</th>
@@ -94,6 +97,7 @@
             @endphp
             <tr>
                 <td class="fw-semibold">{{ $curso->titulo }}</td>
+                <td class="text-muted" style="font-size:0.875rem;">{{ $curso->empresa->nome ?? '-' }}</td>
                 <td>{{ $curso->data_inicio->format('d/m/Y') }}</td>
                 <td>{{ $curso->local }}</td>
                 <td>
@@ -118,7 +122,7 @@
                 </td>
             </tr>
         @empty
-            <tr><td colspan="7" class="text-center text-muted py-3" style="font-size:0.875rem;">Nenhum curso próximo.</td></tr>
+            <tr><td colspan="8" class="text-center text-muted py-3" style="font-size:0.875rem;">Nenhum curso próximo.</td></tr>
         @endforelse
         </tbody>
     </table>
@@ -131,6 +135,7 @@
     <table class="table mb-0">
         <thead><tr>
             <th><a href="{{ cursoSortUrl('titulo', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Título{!! cursoSortIcon('titulo', $sort, $dir) !!}</a></th>
+            <th>Empresa</th>
             <th><a href="{{ cursoSortUrl('data_inicio', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Data{!! cursoSortIcon('data_inicio', $sort, $dir) !!}</a></th>
             <th><a href="{{ cursoSortUrl('local', $sort, $dir) }}" style="color:inherit;text-decoration:none;">Local{!! cursoSortIcon('local', $sort, $dir) !!}</a></th>
             <th>Status</th><th>Ativo</th><th style="width:70px; text-align:center;">Flyer DL</th><th style="width:140px;">Ações</th>
@@ -140,6 +145,7 @@
             @php $diasTerminou = $curso->data_fim->startOfDay()->diffInDays(now()->startOfDay()); @endphp
             <tr style="opacity:0.7;">
                 <td class="fw-semibold">{{ $curso->titulo }}</td>
+                <td class="text-muted" style="font-size:0.875rem;">{{ $curso->empresa->nome ?? '-' }}</td>
                 <td class="text-muted" style="font-size:0.875rem;">{{ $curso->data_inicio->format('d/m/Y') }}</td>
                 <td>{{ $curso->local }}</td>
                 <td><span class="badge bg-secondary">Terminou há {{ $diasTerminou }} dia{{ $diasTerminou != 1 ? 's' : '' }}</span></td>

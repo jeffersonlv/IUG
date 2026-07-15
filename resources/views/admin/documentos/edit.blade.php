@@ -13,6 +13,16 @@
         @csrf
         @method('PUT')
         <div class="mb-3">
+            <label class="form-label">Empresa</label>
+            <select name="empresa_id" class="form-control @error('empresa_id') is-invalid @enderror" required>
+                <option value="">Selecione...</option>
+                @foreach($empresas as $emp)
+                    <option value="{{ $emp->id }}" {{ old('empresa_id', $documento->empresa_id) == $emp->id ? 'selected' : '' }}>{{ $emp->nome }}</option>
+                @endforeach
+            </select>
+            @error('empresa_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
+        <div class="mb-3">
             <label class="form-label">Nome</label>
             <input type="text" name="nome" class="form-control @error('nome') is-invalid @enderror"
                    value="{{ old('nome', $documento->nome) }}" required>

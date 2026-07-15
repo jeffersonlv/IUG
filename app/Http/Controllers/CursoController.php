@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Curso;
+use App\Models\Empresa;
 use App\Models\Palestrante;
 use App\Models\SiteConfig;
 use Illuminate\Http\Request;
@@ -32,7 +33,7 @@ class CursoController extends Controller
         $sort = in_array($request->input('sort'), $sortable) ? $request->input('sort') : null;
         $dir  = $request->input('dir') === 'desc' ? 'desc' : 'asc';
 
-        $baseQuery = Curso::when($qs, fn($q) => $q->where('titulo', 'like', $qs)->orWhere('local', 'like', $qs));
+        $baseQuery = Curso::with('empresa')->when($qs, fn($q) => $q->where('titulo', 'like', $qs)->orWhere('local', 'like', $qs));
 
         if ($sort) {
             $baseQuery->orderBy($sort, $dir);
@@ -58,13 +59,15 @@ class CursoController extends Controller
     public function adminCreate()
     {
         $palestrantes = Palestrante::where('ativo', true)->orderBy('nome')->get();
+        $empresas     = Empresa::where('ativo', true)->orderBy('nome')->get();
         $configs      = SiteConfig::all()->pluck('valor', 'chave')->toArray();
-        return view('admin.cursos.create', compact('palestrantes', 'configs'));
+        return view('admin.cursos.create', compact('palestrantes', 'empresas', 'configs'));
     }
 
     public function adminStore(Request $request)
     {
         $validated = $request->validate([
+            'empresa_id'    => 'required|exists:empresas,id',
             'titulo'        => 'required|string|max:255',
             'data_inicio'   => 'required|date',
             'data_fim'      => 'required|date|after_or_equal:data_inicio',
@@ -105,6 +108,7 @@ class CursoController extends Controller
     {
         $curso        = Curso::with('palestrantes')->findOrFail($id);
         $palestrantes = Palestrante::where('ativo', true)->orderBy('nome')->get();
+        $empresas     = Empresa::where('ativo', true)->orderBy('nome')->get();
 
         $q       = $request->input('q_aluno');
         $sortMap = ['nome_completo', 'cidade', 'estado'];
@@ -125,13 +129,14 @@ class CursoController extends Controller
         $totalAlunos = $curso->alunos()->count();
         $alunos      = $alunosQuery->paginate(15, ['*'], 'page_aluno')->withQueryString();
 
-        return view('admin.cursos.edit', compact('curso', 'palestrantes', 'alunos', 'totalAlunos', 'q', 'sort', 'dir'));
+        return view('admin.cursos.edit', compact('curso', 'palestrantes', 'empresas', 'alunos', 'totalAlunos', 'q', 'sort', 'dir'));
     }
 
     public function adminUpdate(Request $request, $id)
     {
         $curso = Curso::findOrFail($id);
         $validated = $request->validate([
+            'empresa_id'       => 'required|exists:empresas,id',
             'titulo'           => 'required|string|max:255',
             'data_inicio'      => 'required|date',
             'data_fim'         => 'required|date|after_or_equal:data_inicio',

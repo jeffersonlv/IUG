@@ -12,6 +12,18 @@
     <form action="{{ route('admin.cursos.store') }}" method="POST" enctype="multipart/form-data" id="curso-form">
         @csrf
 
+        {{-- Empresa --}}
+        <div class="mb-3">
+            <label class="form-label">Empresa</label>
+            <select name="empresa_id" class="form-control @error('empresa_id') is-invalid @enderror" required>
+                <option value="">Selecione...</option>
+                @foreach($empresas as $emp)
+                    <option value="{{ $emp->id }}" {{ old('empresa_id') == $emp->id ? 'selected' : '' }}>{{ $emp->nome }}</option>
+                @endforeach
+            </select>
+            @error('empresa_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
+
         {{-- Título --}}
         <div class="mb-3">
             <label class="form-label">Título do Curso</label>

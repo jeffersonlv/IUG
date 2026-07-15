@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Documento;
+use App\Models\Empresa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -38,7 +39,7 @@ class DocumentoController extends Controller
         $sort = in_array($request->input('sort'), $sortable) ? $request->input('sort') : null;
         $dir  = $request->input('dir') === 'desc' ? 'desc' : 'asc';
 
-        $query = Documento::query();
+        $query = Documento::with('empresa');
         if ($sort) {
             $query->orderBy($sort, $dir);
         } else {
@@ -50,12 +51,14 @@ class DocumentoController extends Controller
 
     public function adminCreate()
     {
-        return view('admin.documentos.create');
+        $empresas = Empresa::where('ativo', true)->orderBy('nome')->get();
+        return view('admin.documentos.create', compact('empresas'));
     }
 
     public function adminStore(Request $request)
     {
         $validated = $request->validate([
+            'empresa_id'       => 'required|exists:empresas,id',
             'nome'             => 'required|string|max:255',
             'arquivo_pdf'      => 'required|file|mimes:pdf|max:10240',
             'ativo'            => 'boolean',
@@ -79,13 +82,15 @@ class DocumentoController extends Controller
     public function adminEdit($id)
     {
         $documento = Documento::findOrFail($id);
-        return view('admin.documentos.edit', compact('documento'));
+        $empresas  = Empresa::where('ativo', true)->orderBy('nome')->get();
+        return view('admin.documentos.edit', compact('documento', 'empresas'));
     }
 
     public function adminUpdate(Request $request, $id)
     {
         $documento = Documento::findOrFail($id);
         $validated = $request->validate([
+            'empresa_id'       => 'required|exists:empresas,id',
             'nome'             => 'required|string|max:255',
             'arquivo_pdf'      => 'nullable|file|mimes:pdf|max:10240',
             'ativo'            => 'boolean',
