@@ -46,17 +46,21 @@ class AlunoController extends Controller
             'cursos.*'      => 'exists:cursos,id',
         ]);
 
-        $aluno = Aluno::create([
+        $aluno = Aluno::firstOrCreate([
             'nome_completo' => $validated['nome_completo'],
             'cidade'        => $validated['cidade'],
             'estado'        => strtoupper($validated['estado']),
         ]);
 
         if (!empty($validated['cursos'])) {
-            $aluno->cursos()->sync($validated['cursos']);
+            $aluno->cursos()->syncWithoutDetaching($validated['cursos']);
         }
 
-        return redirect()->route('admin.alunos.index')->with('success', 'Aluno cadastrado com sucesso.');
+        $mensagem = $aluno->wasRecentlyCreated
+            ? 'Aluno cadastrado com sucesso.'
+            : 'Aluno já existia (mesmo nome/cidade/estado) — cursos atualizados sem perder o histórico.';
+
+        return redirect()->route('admin.alunos.index')->with('success', $mensagem);
     }
 
     public function adminEdit($id)
