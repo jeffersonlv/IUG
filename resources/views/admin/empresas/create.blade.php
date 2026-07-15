@@ -9,13 +9,19 @@
 
 <div class="card p-4" style="max-width:600px;">
     <div class="accent-bar"></div>
-    <form action="{{ route('admin.empresas.store') }}" method="POST">
+    <form action="{{ route('admin.empresas.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="mb-3">
             <label class="form-label">Nome</label>
             <input type="text" name="nome" class="form-control @error('nome') is-invalid @enderror"
                    value="{{ old('nome') }}" required>
             @error('nome')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Ícone <small class="text-muted">(JPG/PNG/WEBP/SVG, máx 1MB)</small></label>
+            <input type="file" name="icone" class="form-control @error('icone') is-invalid @enderror"
+                   accept="image/jpg,image/jpeg,image/png,image/webp,image/svg+xml">
+            @error('icone')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
         <div class="row mb-3">
             <div class="col-md-6">

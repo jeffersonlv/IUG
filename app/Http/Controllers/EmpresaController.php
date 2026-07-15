@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Empresa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class EmpresaController extends Controller
 {
@@ -37,7 +38,15 @@ class EmpresaController extends Controller
             'sobre_texto'  => 'nullable|string|max:2000',
             'endereco'     => 'nullable|string|max:255',
             'publico_alvo' => 'nullable|string|max:255',
+            'icone'        => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:1024',
         ]);
+
+        if ($request->hasFile('icone')) {
+            $file = $request->file('icone');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('empresas', $filename, 'public');
+            $validated['icone'] = $filename;
+        }
 
         $validated['data_criacao'] = now();
         $validated['ativo'] = $request->boolean('ativo');
@@ -65,7 +74,18 @@ class EmpresaController extends Controller
             'sobre_texto'  => 'nullable|string|max:2000',
             'endereco'     => 'nullable|string|max:255',
             'publico_alvo' => 'nullable|string|max:255',
+            'icone'        => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:1024',
         ]);
+
+        if ($request->hasFile('icone')) {
+            if ($empresa->icone) {
+                Storage::disk('public')->delete('empresas/' . $empresa->icone);
+            }
+            $file = $request->file('icone');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('empresas', $filename, 'public');
+            $validated['icone'] = $filename;
+        }
 
         $validated['ativo'] = $request->boolean('ativo');
         $validated['visivel'] = $request->boolean('visivel');
@@ -76,6 +96,9 @@ class EmpresaController extends Controller
     public function adminDestroy($id)
     {
         $empresa = Empresa::findOrFail($id);
+        if ($empresa->icone) {
+            Storage::disk('public')->delete('empresas/' . $empresa->icone);
+        }
         $empresa->delete();
         return redirect()->route('admin.empresas.index')->with('success', 'Empresa deletada com sucesso.');
     }

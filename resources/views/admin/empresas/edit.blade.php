@@ -9,7 +9,7 @@
 
 <div class="card p-4" style="max-width:600px;">
     <div class="accent-bar"></div>
-    <form action="{{ route('admin.empresas.update', $empresa->id) }}" method="POST">
+    <form action="{{ route('admin.empresas.update', $empresa->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div class="mb-3">
@@ -17,6 +17,15 @@
             <input type="text" name="nome" class="form-control @error('nome') is-invalid @enderror"
                    value="{{ old('nome', $empresa->nome) }}" required>
             @error('nome')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Ícone <small class="text-muted">(deixe em branco para manter atual)</small></label>
+            @if($empresa->icone)
+                <div class="mb-2"><img src="{{ $empresa->icone_url }}" alt="{{ $empresa->nome }}" style="width:48px; height:48px; object-fit:contain; border-radius:6px; border:1px solid #DDE1EB;"></div>
+            @endif
+            <input type="file" name="icone" class="form-control @error('icone') is-invalid @enderror"
+                   accept="image/jpg,image/jpeg,image/png,image/webp,image/svg+xml">
+            @error('icone')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
         <div class="mb-3">
             <label class="form-label">Data de Criação</label>

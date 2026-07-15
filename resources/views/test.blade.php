@@ -61,7 +61,10 @@
         <div id="documentosTabs" class="empresa-tabs" style="display:flex; flex-wrap:wrap; gap:4px; border-bottom:2px solid #1A2B5F; margin-bottom:1.5rem;">
             @foreach($empresas as $emp)
             <button type="button" class="folder-tab" data-empresa="{{ $emp->id }}"
-                    style="border:1px solid #DDE1EB; border-bottom:none; background:#E4E8F2; color:#1A2B5F; font-weight:600; font-size:0.85rem; padding:0.6rem 1.2rem; border-radius:8px 8px 0 0; cursor:pointer; transition:background 0.15s;">
+                    style="display:flex; align-items:center; gap:8px; border:1px solid #DDE1EB; border-bottom:none; background:#E4E8F2; color:#1A2B5F; font-weight:600; font-size:0.85rem; padding:0.6rem 1.2rem; border-radius:8px 8px 0 0; cursor:pointer; transition:background 0.15s;">
+                @if($emp->icone_url)
+                <img src="{{ $emp->icone_url }}" alt="" style="width:20px; height:20px; object-fit:contain; border-radius:4px;">
+                @endif
                 {{ $emp->nome }}
             </button>
             @endforeach
@@ -112,7 +115,10 @@
         <div id="cursosTabs" class="empresa-tabs" style="display:flex; flex-wrap:wrap; gap:4px; border-bottom:2px solid #1A2B5F; margin-bottom:1.5rem;">
             @foreach($empresas as $emp)
             <button type="button" class="folder-tab" data-empresa="{{ $emp->id }}"
-                    style="border:1px solid #DDE1EB; border-bottom:none; background:#E4E8F2; color:#1A2B5F; font-weight:600; font-size:0.85rem; padding:0.6rem 1.2rem; border-radius:8px 8px 0 0; cursor:pointer; transition:background 0.15s;">
+                    style="display:flex; align-items:center; gap:8px; border:1px solid #DDE1EB; border-bottom:none; background:#E4E8F2; color:#1A2B5F; font-weight:600; font-size:0.85rem; padding:0.6rem 1.2rem; border-radius:8px 8px 0 0; cursor:pointer; transition:background 0.15s;">
+                @if($emp->icone_url)
+                <img src="{{ $emp->icone_url }}" alt="" style="width:20px; height:20px; object-fit:contain; border-radius:4px;">
+                @endif
                 {{ $emp->nome }}
             </button>
             @endforeach
