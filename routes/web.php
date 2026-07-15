@@ -21,6 +21,10 @@ Route::get('/', function (\Illuminate\Http\Request $request) {
     $configs = \App\Models\SiteConfig::all()->pluck('valor', 'chave')->toArray();
 
     $view = $request->query('t') === '2026' ? 'test' : 'welcome';
+    if ($view === 'test') {
+        $empresas = \App\Models\Empresa::where('ativo', true)->where('visivel', true)->orderBy('id')->get();
+        return view($view, compact('cursos', 'documentos', 'configs', 'empresas'));
+    }
     return view($view, compact('cursos', 'documentos', 'configs'));
 });
 

@@ -48,18 +48,41 @@
 @endif
 
 {{-- ══════════════════════════════════════════
+     EMPRESAS (FOLDER TABS)
+══════════════════════════════════════════ --}}
+@if(isset($empresas) && $empresas->count())
+<section id="empresas-panel" style="background:#F0F2F8; padding:3rem 0 0;">
+    <div class="container">
+        <div class="accent-bar"></div>
+        <h2 style="font-family:'Montserrat',sans-serif; font-weight:700; color:#1A2B5F; font-size:1.5rem; margin-bottom:1rem;">Empresas</h2>
+        <div id="empresaTabs" style="display:flex; flex-wrap:wrap; gap:4px; border-bottom:2px solid #1A2B5F;">
+            @foreach($empresas as $emp)
+            <button type="button" class="folder-tab" data-empresa="{{ $emp->id }}"
+                    style="border:1px solid #DDE1EB; border-bottom:none; background:#E4E8F2; color:#1A2B5F; font-weight:600; font-size:0.85rem; padding:0.6rem 1.2rem; border-radius:8px 8px 0 0; cursor:pointer; transition:background 0.15s;">
+                {{ $emp->nome }}
+            </button>
+            @endforeach
+            <button type="button" class="folder-tab" data-empresa="outros"
+                    style="border:1px solid #DDE1EB; border-bottom:none; background:#E4E8F2; color:#1A2B5F; font-weight:600; font-size:0.85rem; padding:0.6rem 1.2rem; border-radius:8px 8px 0 0; cursor:pointer; transition:background 0.15s;">
+                Outros
+            </button>
+        </div>
+    </div>
+</section>
+@endif
+
+{{-- ══════════════════════════════════════════
      SETOR DA TRANSPARÊNCIA
 ══════════════════════════════════════════ --}}
 @if($documentos->count())
-<section id="documentos" style="background:#F0F2F8; padding:4rem 0;">
+<section id="documentos" style="background:#F0F2F8; padding:2rem 0 4rem;">
     <div class="container">
-        <div class="accent-bar"></div>
         <h2 style="font-family:'Montserrat',sans-serif; font-weight:700; color:#1A2B5F; font-size:1.5rem; margin-bottom:0.5rem;">Setor da Transparência</h2>
         <p class="text-muted mb-4" style="font-size:0.9rem;">Documentos e certificações disponíveis para consulta pública.</p>
 
-        <div class="row g-4">
+        <div class="row g-4" id="documentos-grid">
             @foreach($documentos as $doc)
-            <div class="col-md-6 col-lg-3">
+            <div class="col-md-6 col-lg-3" data-empresa="{{ $doc->empresa_id ?? 'outros' }}">
                 <div class="card h-100">
                     @if($doc->arquivo_pdf)
                     @php $docUrl = \Illuminate\Support\Facades\Storage::url('documentos/' . $doc->arquivo_pdf); @endphp
@@ -84,6 +107,7 @@
             </div>
             @endforeach
         </div>
+        <p class="text-muted text-center py-4" id="documentos-empty-empresa" style="display:none;">Nenhum documento cadastrado para esta empresa.</p>
     </div>
 </section>
 @endif
@@ -96,9 +120,9 @@
         <div class="accent-bar"></div>
         <h2 style="font-family:'Montserrat',sans-serif; font-weight:700; color:#1A2B5F; font-size:1.5rem; margin-bottom:2rem;">Cursos e Capacitações</h2>
 
-        <div class="row g-4">
+        <div class="row g-4" id="cursos-grid">
         @forelse($cursos as $curso)
-        <div class="col-md-6 col-lg-4">
+        <div class="col-md-6 col-lg-4" data-empresa="{{ $curso->empresa_id ?? 'outros' }}">
             <div class="card h-100" style="border-top:4px solid #E8600A;">
                 <div class="card-body p-4 d-flex flex-column">
                     <p style="color:#E8600A; font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.4rem;">
@@ -149,6 +173,7 @@
         <div class="col"><p class="text-muted">Nenhum curso disponível no momento.</p></div>
         @endforelse
         </div>
+        <p class="text-muted text-center py-4" id="cursos-empty-empresa" style="display:none;">Nenhum curso cadastrado para esta empresa.</p>
     </div>
 </section>
 
@@ -195,5 +220,42 @@
         </div>
     </div>
 </section>
+
+@if(isset($empresas) && $empresas->count())
+<script>
+(function () {
+    var tabs = document.querySelectorAll('#empresaTabs .folder-tab');
+    if (!tabs.length) return;
+
+    function ativarTab(id) {
+        tabs.forEach(function (t) {
+            var ativo = t.dataset.empresa === id;
+            t.classList.toggle('active', ativo);
+            t.style.background = ativo ? '#fff' : '#E4E8F2';
+            t.style.color = ativo ? '#E8600A' : '#1A2B5F';
+        });
+
+        ['documentos-grid', 'cursos-grid'].forEach(function (gridId) {
+            var grid = document.getElementById(gridId);
+            if (!grid) return;
+            var visiveis = 0;
+            grid.querySelectorAll('[data-empresa]').forEach(function (card) {
+                var match = card.dataset.empresa === id;
+                card.style.display = match ? '' : 'none';
+                if (match) visiveis++;
+            });
+            var vazio = document.getElementById(gridId.replace('-grid', '-empty-empresa'));
+            if (vazio) vazio.style.display = visiveis === 0 ? '' : 'none';
+        });
+    }
+
+    tabs.forEach(function (t) {
+        t.addEventListener('click', function () { ativarTab(t.dataset.empresa); });
+    });
+
+    ativarTab(tabs[0].dataset.empresa);
+})();
+</script>
+@endif
 
 @endsection
