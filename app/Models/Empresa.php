@@ -9,7 +9,10 @@ class Empresa extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nome', 'data_criacao', 'ativo', 'visivel'];
+    protected $fillable = [
+        'nome', 'data_criacao', 'ativo', 'visivel',
+        'telefone', 'whatsapp', 'email', 'sobre_texto', 'endereco', 'publico_alvo',
+    ];
 
     protected $casts = [
         'data_criacao' => 'date',

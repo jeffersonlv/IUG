@@ -22,6 +22,43 @@
             <label class="form-label">Data de Criação</label>
             <input type="text" class="form-control" value="{{ $empresa->data_criacao ? $empresa->data_criacao->format('d/m/Y') : '-' }}" disabled>
         </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label">Telefone</label>
+                <input type="text" name="telefone" class="form-control @error('telefone') is-invalid @enderror"
+                       value="{{ old('telefone', $empresa->telefone) }}">
+                @error('telefone')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">WhatsApp</label>
+                <input type="text" name="whatsapp" class="form-control @error('whatsapp') is-invalid @enderror"
+                       value="{{ old('whatsapp', $empresa->whatsapp) }}">
+                @error('whatsapp')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
+                   value="{{ old('email', $empresa->email) }}">
+            @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Endereço</label>
+            <input type="text" name="endereco" class="form-control @error('endereco') is-invalid @enderror"
+                   value="{{ old('endereco', $empresa->endereco) }}">
+            @error('endereco')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Público Alvo</label>
+            <input type="text" name="publico_alvo" class="form-control @error('publico_alvo') is-invalid @enderror"
+                   value="{{ old('publico_alvo', $empresa->publico_alvo) }}">
+            @error('publico_alvo')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Sobre</label>
+            <textarea name="sobre_texto" rows="4" class="form-control @error('sobre_texto') is-invalid @enderror">{{ old('sobre_texto', $empresa->sobre_texto) }}</textarea>
+            @error('sobre_texto')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
         <div class="mb-3 form-check">
             <input type="checkbox" name="ativo" value="1" class="form-check-input" id="ativo" {{ old('ativo', $empresa->ativo) ? 'checked' : '' }}>
             <label class="form-check-label fw-semibold" for="ativo">Ativo</label>

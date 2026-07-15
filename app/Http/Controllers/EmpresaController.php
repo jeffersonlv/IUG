@@ -28,9 +28,15 @@ class EmpresaController extends Controller
     public function adminStore(Request $request)
     {
         $validated = $request->validate([
-            'nome'    => 'required|string|max:255',
-            'ativo'   => 'boolean',
-            'visivel' => 'boolean',
+            'nome'         => 'required|string|max:255',
+            'ativo'        => 'boolean',
+            'visivel'      => 'boolean',
+            'telefone'     => 'nullable|string|max:30',
+            'whatsapp'     => 'nullable|string|max:30',
+            'email'        => 'nullable|email|max:255',
+            'sobre_texto'  => 'nullable|string|max:2000',
+            'endereco'     => 'nullable|string|max:255',
+            'publico_alvo' => 'nullable|string|max:255',
         ]);
 
         $validated['data_criacao'] = now();
@@ -50,9 +56,15 @@ class EmpresaController extends Controller
     {
         $empresa = Empresa::findOrFail($id);
         $validated = $request->validate([
-            'nome'    => 'required|string|max:255',
-            'ativo'   => 'boolean',
-            'visivel' => 'boolean',
+            'nome'         => 'required|string|max:255',
+            'ativo'        => 'boolean',
+            'visivel'      => 'boolean',
+            'telefone'     => 'nullable|string|max:30',
+            'whatsapp'     => 'nullable|string|max:30',
+            'email'        => 'nullable|email|max:255',
+            'sobre_texto'  => 'nullable|string|max:2000',
+            'endereco'     => 'nullable|string|max:255',
+            'publico_alvo' => 'nullable|string|max:255',
         ]);
 
         $validated['ativo'] = $request->boolean('ativo');
