@@ -38,24 +38,51 @@
             </div>
         </div>
 
-        <div class="mb-4">
+        @php
+            $selecionados = old('cursos', $cursosSelecionados);
+            $cursosRealizados = $cursos->whereIn('id', $selecionados);
+            $cursosOutros = $cursos->whereNotIn('id', $selecionados);
+        @endphp
+
+        <div class="mb-3">
             <label class="form-label fw-semibold">Cursos realizados</label>
             <div style="max-height:240px; overflow-y:auto; border:1px solid #DDE1EB; border-radius:6px; padding:0.75rem;">
-                @forelse($cursos as $curso)
+                @forelse($cursosRealizados as $curso)
                 <div class="form-check mb-1">
                     <input class="form-check-input" type="checkbox" name="cursos[]"
                            value="{{ $curso->id }}" id="curso_{{ $curso->id }}"
-                           {{ in_array($curso->id, old('cursos', $cursosSelecionados)) ? 'checked' : '' }}>
+                           {{ in_array($curso->id, $selecionados) ? 'checked' : '' }}>
                     <label class="form-check-label" for="curso_{{ $curso->id }}" style="font-size:0.875rem;">
                         <strong>{{ $curso->titulo }}</strong>
                         <span class="text-muted"> — {{ $curso->data_inicio->format('d/m/Y') }}</span>
                     </label>
                 </div>
                 @empty
-                    <p class="text-muted mb-0" style="font-size:0.875rem;">Nenhum curso cadastrado.</p>
+                    <p class="text-muted mb-0" style="font-size:0.875rem;">Nenhum curso realizado ainda.</p>
                 @endforelse
             </div>
         </div>
+
+        <details class="mb-4">
+            <summary class="fw-semibold" style="cursor:pointer; color:#1A2B5F; font-size:0.9rem; padding:0.25rem 0;">
+                Ver outros cursos ({{ $cursosOutros->count() }})
+            </summary>
+            <div style="max-height:240px; overflow-y:auto; border:1px solid #DDE1EB; border-radius:6px; padding:0.75rem; margin-top:0.5rem;">
+                @forelse($cursosOutros as $curso)
+                <div class="form-check mb-1">
+                    <input class="form-check-input" type="checkbox" name="cursos[]"
+                           value="{{ $curso->id }}" id="curso_{{ $curso->id }}"
+                           {{ in_array($curso->id, $selecionados) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="curso_{{ $curso->id }}" style="font-size:0.875rem;">
+                        <strong>{{ $curso->titulo }}</strong>
+                        <span class="text-muted"> — {{ $curso->data_inicio->format('d/m/Y') }}</span>
+                    </label>
+                </div>
+                @empty
+                    <p class="text-muted mb-0" style="font-size:0.875rem;">Nenhum outro curso cadastrado.</p>
+                @endforelse
+            </div>
+        </details>
 
         <button type="submit" class="btn btn-primary">Atualizar Aluno</button>
     </form>
