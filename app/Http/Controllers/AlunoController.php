@@ -32,8 +32,7 @@ class AlunoController extends Controller
 
     public function adminCreate()
     {
-        $cursos = Curso::whereDate('data_fim', '>=', now()->toDateString())
-            ->orderBy('data_inicio')->get();
+        $cursos = Curso::orderByDesc('data_inicio')->get();
         return view('admin.alunos.create', ['cursos' => $cursos, 'estados' => self::$estados]);
     }
 
@@ -63,8 +62,7 @@ class AlunoController extends Controller
     public function adminEdit($id)
     {
         $aluno = Aluno::with('cursos')->findOrFail($id);
-        $cursos = Curso::whereDate('data_fim', '>=', now()->toDateString())
-            ->orderBy('data_inicio')->get();
+        $cursos = Curso::orderByDesc('data_inicio')->get();
         $cursosSelecionados = $aluno->cursos->pluck('id')->toArray();
         return view('admin.alunos.edit', compact('aluno', 'cursos', 'cursosSelecionados') + ['estados' => self::$estados]);
     }
@@ -93,8 +91,7 @@ class AlunoController extends Controller
 
     public function adminLote()
     {
-        $cursos = Curso::whereDate('data_fim', '>=', now()->toDateString())
-            ->orderBy('data_inicio')->get();
+        $cursos = Curso::orderByDesc('data_inicio')->get();
         return view('admin.alunos.lote', ['cursos' => $cursos, 'estados' => self::$estados]);
     }
 

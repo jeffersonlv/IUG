@@ -22,15 +22,29 @@
 
         <div class="mb-3">
             <label class="form-label fw-semibold">Curso <span class="text-danger">*</span></label>
-            <select name="curso_id" class="form-select" required>
-                <option value="">Selecione o curso...</option>
+            <input type="text" id="curso-busca" class="form-control mb-1" placeholder="Buscar curso pelo título...">
+            <select name="curso_id" id="curso-select" class="form-select" size="8" required style="height:auto;">
                 @foreach($cursos as $curso)
-                    <option value="{{ $curso->id }}" {{ old('curso_id') == $curso->id ? 'selected' : '' }}>
+                    <option value="{{ $curso->id }}" data-titulo="{{ mb_strtolower($curso->titulo) }}"
+                            {{ old('curso_id') == $curso->id ? 'selected' : '' }}>
                         {{ $curso->titulo }} — {{ $curso->data_inicio->format('d/m/Y') }}
                     </option>
                 @endforeach
             </select>
         </div>
+        <script>
+        (function () {
+            var busca = document.getElementById('curso-busca');
+            var select = document.getElementById('curso-select');
+            if (!busca || !select) return;
+            busca.addEventListener('input', function () {
+                var termo = busca.value.trim().toLowerCase();
+                Array.from(select.options).forEach(function (opt) {
+                    opt.hidden = termo !== '' && opt.dataset.titulo.indexOf(termo) === -1;
+                });
+            });
+        })();
+        </script>
 
         <div class="row g-3 mb-3">
             <div class="col-8">
