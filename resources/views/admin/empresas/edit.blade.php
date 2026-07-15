@@ -20,9 +20,7 @@
         </div>
         <div class="mb-3">
             <label class="form-label">Data de Criação</label>
-            <input type="date" name="data_criacao" class="form-control @error('data_criacao') is-invalid @enderror"
-                   value="{{ old('data_criacao', $empresa->data_criacao ? $empresa->data_criacao->format('Y-m-d') : '') }}">
-            @error('data_criacao')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            <input type="text" class="form-control" value="{{ $empresa->data_criacao ? $empresa->data_criacao->format('d/m/Y') : '-' }}" disabled>
         </div>
         <div class="mb-3 form-check">
             <input type="checkbox" name="ativo" value="1" class="form-check-input" id="ativo" {{ old('ativo', $empresa->ativo) ? 'checked' : '' }}>

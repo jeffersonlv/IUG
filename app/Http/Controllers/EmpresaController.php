@@ -28,12 +28,12 @@ class EmpresaController extends Controller
     public function adminStore(Request $request)
     {
         $validated = $request->validate([
-            'nome'         => 'required|string|max:255',
-            'data_criacao' => 'nullable|date',
-            'ativo'        => 'boolean',
-            'visivel'      => 'boolean',
+            'nome'    => 'required|string|max:255',
+            'ativo'   => 'boolean',
+            'visivel' => 'boolean',
         ]);
 
+        $validated['data_criacao'] = now();
         $validated['ativo'] = $request->boolean('ativo');
         $validated['visivel'] = $request->boolean('visivel');
         Empresa::create($validated);
@@ -50,10 +50,9 @@ class EmpresaController extends Controller
     {
         $empresa = Empresa::findOrFail($id);
         $validated = $request->validate([
-            'nome'         => 'required|string|max:255',
-            'data_criacao' => 'nullable|date',
-            'ativo'        => 'boolean',
-            'visivel'      => 'boolean',
+            'nome'    => 'required|string|max:255',
+            'ativo'   => 'boolean',
+            'visivel' => 'boolean',
         ]);
 
         $validated['ativo'] = $request->boolean('ativo');

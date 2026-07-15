@@ -17,12 +17,6 @@
                    value="{{ old('nome') }}" required>
             @error('nome')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
-        <div class="mb-3">
-            <label class="form-label">Data de Criação</label>
-            <input type="date" name="data_criacao" class="form-control @error('data_criacao') is-invalid @enderror"
-                   value="{{ old('data_criacao') }}">
-            @error('data_criacao')<div class="invalid-feedback">{{ $message }}</div>@enderror
-        </div>
         <div class="mb-3 form-check">
             <input type="checkbox" name="ativo" value="1" class="form-check-input" id="ativo" checked>
             <label class="form-check-label fw-semibold" for="ativo">Ativo</label>
