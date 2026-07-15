@@ -87,6 +87,13 @@ Route::prefix('admin')->group(function () {
         Route::delete('/certificados/excluir-pdf', [\App\Http\Controllers\CertificadoController::class, 'excluirPdf'])->name('admin.certificados.excluirPdf');
         Route::delete('/certificados/excluir-curso', [\App\Http\Controllers\CertificadoController::class, 'excluirCurso'])->name('admin.certificados.excluirCurso');
 
+        Route::get('/empresas', [\App\Http\Controllers\EmpresaController::class, 'adminIndex'])->name('admin.empresas.index');
+        Route::get('/empresas/create', [\App\Http\Controllers\EmpresaController::class, 'adminCreate'])->name('admin.empresas.create');
+        Route::post('/empresas', [\App\Http\Controllers\EmpresaController::class, 'adminStore'])->name('admin.empresas.store');
+        Route::get('/empresas/{id}/edit', [\App\Http\Controllers\EmpresaController::class, 'adminEdit'])->name('admin.empresas.edit');
+        Route::put('/empresas/{id}', [\App\Http\Controllers\EmpresaController::class, 'adminUpdate'])->name('admin.empresas.update');
+        Route::delete('/empresas/{id}', [\App\Http\Controllers\EmpresaController::class, 'adminDestroy'])->name('admin.empresas.destroy');
+
         Route::get('/config', [\App\Http\Controllers\ConfigController::class, 'index'])->name('admin.config.index');
         Route::put('/config', [\App\Http\Controllers\ConfigController::class, 'update'])->name('admin.config.update');
 
