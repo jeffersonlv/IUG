@@ -13,13 +13,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+Route::get('/', function (\Illuminate\Http\Request $request) {
     $cursos = \App\Models\Curso::with('palestrantes')->where('ativo', true)->orderBy('ordem')->orderBy('data_inicio')->get();
     $documentos = \App\Models\Documento::where('ativo', true)
         ->where(function ($q) { $q->whereNull('data_vencimento')->orWhere('data_vencimento', '>=', now()->toDateString()); })
         ->orderBy('ordem')->orderBy('created_at', 'desc')->get();
     $configs = \App\Models\SiteConfig::all()->pluck('valor', 'chave')->toArray();
-    return view('welcome', compact('cursos', 'documentos', 'configs'));
+
+    $view = $request->query('t') === '2026' ? 'test' : 'welcome';
+    return view($view, compact('cursos', 'documentos', 'configs'));
 });
 
 Route::get('/run-seeder-iug2026', function () {
