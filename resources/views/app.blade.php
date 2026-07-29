@@ -296,6 +296,16 @@
 <body>
     <nav class="navbar navbar-expand-lg">
         <div class="container">
+            @if(isset($empresas) && $empresas->count())
+            <a class="navbar-brand" href="/" style="display:flex; align-items:center; gap:1.5rem;">
+                @foreach($empresas as $emp)
+                    @if($emp->logo_url)
+                    <img src="{{ $emp->logo_url }}" alt="{{ $emp->nome }}" style="height:40px; width:auto; object-fit:contain;">
+                    @endif
+                @endforeach
+            </a>
+            @endif
+
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="filter:invert(1) sepia(1) saturate(5) hue-rotate(175deg);">
                 <span class="navbar-toggler-icon"></span>
             </button>
