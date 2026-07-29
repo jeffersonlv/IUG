@@ -206,12 +206,15 @@
 
         @if(isset($empresas) && $empresas->count())
         @php
-            $colClass = match(true) {
-                $empresas->count() === 1 => 'col-12',
-                $empresas->count() === 2 => 'col-md-6',
-                $empresas->count() === 3 => 'col-md-4',
-                default => 'col-md-6 col-lg-3',
-            };
+            if ($empresas->count() === 1) {
+                $colClass = 'col-12';
+            } elseif ($empresas->count() === 2) {
+                $colClass = 'col-md-6';
+            } elseif ($empresas->count() === 3) {
+                $colClass = 'col-md-4';
+            } else {
+                $colClass = 'col-md-6 col-lg-3';
+            }
         @endphp
         <div class="row g-4">
             @foreach($empresas as $emp)
