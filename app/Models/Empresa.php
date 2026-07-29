@@ -10,7 +10,7 @@ class Empresa extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nome', 'data_criacao', 'ativo', 'visivel', 'icone',
+        'nome', 'data_criacao', 'ativo', 'visivel', 'icone', 'logo',
         'telefone', 'whatsapp', 'email', 'sobre_texto', 'endereco', 'publico_alvo',
     ];
 
@@ -25,5 +25,12 @@ class Empresa extends Model
         if (!$this->icone) return null;
         if (strpos($this->icone, '/') === 0) return $this->icone;
         return \Illuminate\Support\Facades\Storage::url('empresas/' . $this->icone);
+    }
+
+    public function getLogoUrlAttribute(): ?string
+    {
+        if (!$this->logo) return null;
+        if (strpos($this->logo, '/') === 0) return $this->logo;
+        return \Illuminate\Support\Facades\Storage::url('empresas/' . $this->logo);
     }
 }

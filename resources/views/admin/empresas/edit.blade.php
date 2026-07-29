@@ -28,6 +28,15 @@
             @error('icone')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
         <div class="mb-3">
+            <label class="form-label">Logo <small class="text-muted">(deixe em branco para manter atual)</small></label>
+            @if($empresa->logo)
+                <div class="mb-2"><img src="{{ $empresa->logo_url }}" alt="{{ $empresa->nome }}" style="max-width:200px; max-height:80px; object-fit:contain; border-radius:6px; border:1px solid #DDE1EB;"></div>
+            @endif
+            <input type="file" name="logo" class="form-control @error('logo') is-invalid @enderror"
+                   accept="image/jpg,image/jpeg,image/png,image/webp,image/svg+xml">
+            @error('logo')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
+        <div class="mb-3">
             <label class="form-label">Data de Criação</label>
             <input type="text" class="form-control" value="{{ $empresa->data_criacao ? $empresa->data_criacao->format('d/m/Y') : '-' }}" disabled>
         </div>

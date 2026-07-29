@@ -23,6 +23,12 @@
                    accept="image/jpg,image/jpeg,image/png,image/webp,image/svg+xml">
             @error('icone')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
+        <div class="mb-3">
+            <label class="form-label">Logo <small class="text-muted">(JPG/PNG/WEBP/SVG, máx 2MB)</small></label>
+            <input type="file" name="logo" class="form-control @error('logo') is-invalid @enderror"
+                   accept="image/jpg,image/jpeg,image/png,image/webp,image/svg+xml">
+            @error('logo')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
         <div class="row mb-3">
             <div class="col-md-6">
                 <label class="form-label">Telefone</label>

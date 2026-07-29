@@ -39,6 +39,7 @@ class EmpresaController extends Controller
             'endereco'     => 'nullable|string|max:255',
             'publico_alvo' => 'nullable|string|max:255',
             'icone'        => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:1024',
+            'logo'         => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:2048',
         ]);
 
         if ($request->hasFile('icone')) {
@@ -46,6 +47,13 @@ class EmpresaController extends Controller
             $filename = time() . '_' . $file->getClientOriginalName();
             $file->storeAs('empresas', $filename, 'public');
             $validated['icone'] = $filename;
+        }
+
+        if ($request->hasFile('logo')) {
+            $file = $request->file('logo');
+            $filename = time() . '_logo_' . $file->getClientOriginalName();
+            $file->storeAs('empresas', $filename, 'public');
+            $validated['logo'] = $filename;
         }
 
         $validated['data_criacao'] = now();
@@ -75,6 +83,7 @@ class EmpresaController extends Controller
             'endereco'     => 'nullable|string|max:255',
             'publico_alvo' => 'nullable|string|max:255',
             'icone'        => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:1024',
+            'logo'         => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:2048',
         ]);
 
         if ($request->hasFile('icone')) {
@@ -85,6 +94,16 @@ class EmpresaController extends Controller
             $filename = time() . '_' . $file->getClientOriginalName();
             $file->storeAs('empresas', $filename, 'public');
             $validated['icone'] = $filename;
+        }
+
+        if ($request->hasFile('logo')) {
+            if ($empresa->logo) {
+                Storage::disk('public')->delete('empresas/' . $empresa->logo);
+            }
+            $file = $request->file('logo');
+            $filename = time() . '_logo_' . $file->getClientOriginalName();
+            $file->storeAs('empresas', $filename, 'public');
+            $validated['logo'] = $filename;
         }
 
         $validated['ativo'] = $request->boolean('ativo');
@@ -98,6 +117,9 @@ class EmpresaController extends Controller
         $empresa = Empresa::findOrFail($id);
         if ($empresa->icone) {
             Storage::disk('public')->delete('empresas/' . $empresa->icone);
+        }
+        if ($empresa->logo) {
+            Storage::disk('public')->delete('empresas/' . $empresa->logo);
         }
         $empresa->delete();
         return redirect()->route('admin.empresas.index')->with('success', 'Empresa deletada com sucesso.');
