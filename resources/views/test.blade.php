@@ -5,6 +5,21 @@
 @section('content')
 
 {{-- ══════════════════════════════════════════
+     LOGOS DAS EMPRESAS
+══════════════════════════════════════════ --}}
+@if(isset($empresas) && $empresas->whereNotNull('logo')->count())
+<div style="background:#fff; padding:1.25rem 0; border-bottom:1px solid #EEF0F5;">
+    <div class="container" style="display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:2.5rem;">
+        @foreach($empresas as $emp)
+            @if($emp->logo_url)
+            <img src="{{ $emp->logo_url }}" alt="{{ $emp->nome }}" style="max-height:56px; max-width:160px; object-fit:contain;">
+            @endif
+        @endforeach
+    </div>
+</div>
+@endif
+
+{{-- ══════════════════════════════════════════
      HERO BANNER
 ══════════════════════════════════════════ --}}
 <div style="position:relative; width:100%; overflow:hidden; max-height:480px;">
