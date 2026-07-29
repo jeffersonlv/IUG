@@ -192,81 +192,63 @@
             <p style="color:rgba(255,255,255,0.7); font-size:0.95rem;">Estamos prontos para te atender.</p>
         </div>
 
-        @if(!empty($configs['whatsapp']))
-        <div class="text-center mb-5">
-            <a href="https://wa.me/55{{ preg_replace('/\D/','',$configs['whatsapp']) }}"
-               target="_blank"
-               style="display:inline-flex; align-items:center; gap:10px; background:#25D366; color:#fff; font-weight:700; font-size:1rem; padding:1rem 2rem; border-radius:50px; text-decoration:none; box-shadow:0 4px 20px rgba(37,211,102,0.4); transition:transform 0.2s;"
-               onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                Clique para enviar uma mensagem no WhatsApp
-            </a>
-        </div>
-        @endif
-
-        @if(isset($empresas) && $empresas->count())
         @php
-            if ($empresas->count() === 1) {
+            $contatoEmpresas = collect();
+            if (isset($empresas) && $empresas->count()) {
+                $contatoEmpresas = $empresas;
+            } elseif (isset($empresaFallback) && $empresaFallback) {
+                $contatoEmpresas = collect([$empresaFallback]);
+            }
+            $primeiraComDados = $contatoEmpresas->first(function ($e) {
+                return $e->endereco || $e->telefone || $e->email || $e->instagram || $e->whatsapp;
+            });
+            if ($contatoEmpresas->count() === 1) {
                 $colClass = 'col-12';
-            } elseif ($empresas->count() === 2) {
+            } elseif ($contatoEmpresas->count() === 2) {
                 $colClass = 'col-md-6';
-            } elseif ($empresas->count() === 3) {
+            } elseif ($contatoEmpresas->count() === 3) {
                 $colClass = 'col-md-4';
             } else {
                 $colClass = 'col-md-6 col-lg-3';
             }
         @endphp
+        @if($contatoEmpresas->count())
         <div class="row g-4">
-            @foreach($empresas as $emp)
+            @foreach($contatoEmpresas as $emp)
+            @php
+                $semDados = !$emp->endereco && !$emp->telefone && !$emp->email && !$emp->instagram && !$emp->whatsapp;
+                $c = ($semDados && $primeiraComDados) ? $primeiraComDados : $emp;
+            @endphp
             <div class="{{ $colClass }}">
-                <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:1.5rem; height:100%;">
+                <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:1.5rem; height:100%; display:flex; flex-direction:column;">
                     <p style="color:#E8600A; font-weight:700; font-size:0.9rem; margin-bottom:1rem;">{{ $emp->nome }}</p>
-                    @if($emp->endereco)
+                    @if($c->endereco)
                     <p style="color:rgba(255,255,255,0.5); font-size:0.65rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.25rem;">Endereço</p>
-                    <p style="color:#fff; font-size:0.8rem; line-height:1.7; margin-bottom:0.9rem;">{!! nl2br(e($emp->endereco)) !!}</p>
+                    <p style="color:#fff; font-size:0.8rem; line-height:1.7; margin-bottom:0.9rem;">{!! nl2br(e($c->endereco)) !!}</p>
                     @endif
-                    @if($emp->telefone)
+                    @if($c->telefone)
                     <p style="color:rgba(255,255,255,0.5); font-size:0.65rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.25rem;">Telefone</p>
-                    <p style="color:#fff; font-size:0.85rem; font-weight:600; margin-bottom:0.9rem;">{{ $emp->telefone }}</p>
+                    <p style="color:#fff; font-size:0.85rem; font-weight:600; margin-bottom:0.9rem;">{{ $c->telefone }}</p>
                     @endif
-                    @if($emp->email)
+                    @if($c->email)
                     <p style="color:rgba(255,255,255,0.5); font-size:0.65rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.25rem;">E-mail</p>
-                    <a href="mailto:{{ $emp->email }}" style="color:#E8600A; font-size:0.8rem; text-decoration:none; display:block; margin-bottom:0.9rem;">{{ $emp->email }}</a>
+                    <a href="mailto:{{ $c->email }}" style="color:#E8600A; font-size:0.8rem; text-decoration:none; display:block; margin-bottom:0.9rem;">{{ $c->email }}</a>
                     @endif
-                    @if($emp->instagram)
+                    @if($c->instagram)
                     <p style="color:rgba(255,255,255,0.5); font-size:0.65rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.25rem;">Instagram</p>
-                    <a href="{{ $emp->instagram }}" target="_blank" style="color:#E8600A; font-size:0.8rem; text-decoration:none;">{{ $emp->instagram }}</a>
+                    <a href="{{ $c->instagram }}" target="_blank" style="color:#E8600A; font-size:0.8rem; text-decoration:none; display:block; margin-bottom:0.9rem;">{{ $c->instagram }}</a>
+                    @endif
+                    @if($c->whatsapp)
+                    <a href="https://wa.me/55{{ preg_replace('/\D/','',$c->whatsapp) }}"
+                       target="_blank"
+                       style="margin-top:auto; display:inline-flex; align-items:center; justify-content:center; gap:8px; background:#25D366; color:#fff; font-weight:700; font-size:0.8rem; padding:0.65rem 1rem; border-radius:50px; text-decoration:none;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                        WhatsApp
+                    </a>
                     @endif
                 </div>
             </div>
             @endforeach
-        </div>
-        @elseif(isset($empresaFallback) && $empresaFallback)
-        <div class="row g-4 text-center justify-content-center">
-            @if($empresaFallback->endereco)
-            <div class="col-md-4">
-                <p style="color:rgba(255,255,255,0.5); font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem;">Endereço</p>
-                <p style="color:#fff; font-size:0.875rem; line-height:1.9; margin:0;">{!! nl2br(e($empresaFallback->endereco)) !!}</p>
-            </div>
-            @endif
-            @if($empresaFallback->telefone)
-            <div class="col-md-3">
-                <p style="color:rgba(255,255,255,0.5); font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem;">Telefone</p>
-                <p style="color:#fff; font-size:0.95rem; font-weight:600; margin:0;">{{ $empresaFallback->telefone }}</p>
-            </div>
-            @endif
-            @if($empresaFallback->email)
-            <div class="col-md-4">
-                <p style="color:rgba(255,255,255,0.5); font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem;">E-mail</p>
-                <a href="mailto:{{ $empresaFallback->email }}" style="color:#E8600A; font-size:0.9rem; text-decoration:none;">{{ $empresaFallback->email }}</a>
-            </div>
-            @endif
-            @if($empresaFallback->instagram)
-            <div class="col-md-3">
-                <p style="color:rgba(255,255,255,0.5); font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem;">Instagram</p>
-                <a href="{{ $empresaFallback->instagram }}" target="_blank" style="color:#E8600A; font-size:0.9rem; text-decoration:none;">{{ $empresaFallback->instagram }}</a>
-            </div>
-            @endif
         </div>
         @endif
     </div>

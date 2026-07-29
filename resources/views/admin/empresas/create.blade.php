@@ -32,7 +32,7 @@
         <div class="row mb-3">
             <div class="col-md-6">
                 <label class="form-label">Telefone</label>
-                <input type="text" name="telefone" class="form-control @error('telefone') is-invalid @enderror"
+                <input type="tel" name="telefone" class="form-control @error('telefone') is-invalid @enderror"
                        value="{{ old('telefone') }}">
                 @error('telefone')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
