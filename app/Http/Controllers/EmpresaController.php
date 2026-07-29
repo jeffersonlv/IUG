@@ -38,6 +38,7 @@ class EmpresaController extends Controller
             'sobre_texto'  => 'nullable|string|max:2000',
             'endereco'     => 'nullable|string|max:255',
             'publico_alvo' => 'nullable|string|max:255',
+            'instagram'    => 'nullable|string|max:255',
             'icone'        => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:1024',
             'logo'         => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:2048',
         ]);
@@ -82,6 +83,7 @@ class EmpresaController extends Controller
             'sobre_texto'  => 'nullable|string|max:2000',
             'endereco'     => 'nullable|string|max:255',
             'publico_alvo' => 'nullable|string|max:255',
+            'instagram'    => 'nullable|string|max:255',
             'icone'        => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:1024',
             'logo'         => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:2048',
         ]);

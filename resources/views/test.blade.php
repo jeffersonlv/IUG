@@ -204,25 +204,60 @@
         </div>
         @endif
 
+        @if(isset($empresas) && $empresas->count())
+        <div class="row g-4">
+            @foreach($empresas as $emp)
+            <div class="col-md-6 col-lg-3">
+                <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:1.5rem; height:100%;">
+                    <p style="color:#E8600A; font-weight:700; font-size:0.9rem; margin-bottom:1rem;">{{ $emp->nome }}</p>
+                    @if($emp->endereco)
+                    <p style="color:rgba(255,255,255,0.5); font-size:0.65rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.25rem;">Endereço</p>
+                    <p style="color:#fff; font-size:0.8rem; line-height:1.7; margin-bottom:0.9rem;">{!! nl2br(e($emp->endereco)) !!}</p>
+                    @endif
+                    @if($emp->telefone)
+                    <p style="color:rgba(255,255,255,0.5); font-size:0.65rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.25rem;">Telefone</p>
+                    <p style="color:#fff; font-size:0.85rem; font-weight:600; margin-bottom:0.9rem;">{{ $emp->telefone }}</p>
+                    @endif
+                    @if($emp->email)
+                    <p style="color:rgba(255,255,255,0.5); font-size:0.65rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.25rem;">E-mail</p>
+                    <a href="mailto:{{ $emp->email }}" style="color:#E8600A; font-size:0.8rem; text-decoration:none; display:block; margin-bottom:0.9rem;">{{ $emp->email }}</a>
+                    @endif
+                    @if($emp->instagram)
+                    <p style="color:rgba(255,255,255,0.5); font-size:0.65rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.25rem;">Instagram</p>
+                    <a href="{{ $emp->instagram }}" target="_blank" style="color:#E8600A; font-size:0.8rem; text-decoration:none;">{{ $emp->instagram }}</a>
+                    @endif
+                </div>
+            </div>
+            @endforeach
+        </div>
+        @elseif(isset($empresaFallback) && $empresaFallback)
         <div class="row g-4 text-center justify-content-center">
+            @if($empresaFallback->endereco)
             <div class="col-md-4">
                 <p style="color:rgba(255,255,255,0.5); font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem;">Endereço</p>
-                <p style="color:#fff; font-size:0.875rem; line-height:1.9; margin:0;">
-                    {!! nl2br(e($configs['endereco'] ?? 'Rua Q SDE Quadra 01 Conjunto E Lote, Nº04')) !!}
-                </p>
+                <p style="color:#fff; font-size:0.875rem; line-height:1.9; margin:0;">{!! nl2br(e($empresaFallback->endereco)) !!}</p>
             </div>
+            @endif
+            @if($empresaFallback->telefone)
             <div class="col-md-3">
                 <p style="color:rgba(255,255,255,0.5); font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem;">Telefone</p>
-                <p style="color:#fff; font-size:0.95rem; font-weight:600; margin:0;">{{ $configs['telefone'] ?? '(61) 98654-5280' }}</p>
+                <p style="color:#fff; font-size:0.95rem; font-weight:600; margin:0;">{{ $empresaFallback->telefone }}</p>
             </div>
+            @endif
+            @if($empresaFallback->email)
             <div class="col-md-4">
                 <p style="color:rgba(255,255,255,0.5); font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem;">E-mail</p>
-                <a href="mailto:{{ $configs['email'] ?? 'contato@institutoulyssesguimaraes.com.br' }}"
-                   style="color:#E8600A; font-size:0.9rem; text-decoration:none;">
-                    {{ $configs['email'] ?? 'contato@institutoulyssesguimaraes.com.br' }}
-                </a>
+                <a href="mailto:{{ $empresaFallback->email }}" style="color:#E8600A; font-size:0.9rem; text-decoration:none;">{{ $empresaFallback->email }}</a>
             </div>
+            @endif
+            @if($empresaFallback->instagram)
+            <div class="col-md-3">
+                <p style="color:rgba(255,255,255,0.5); font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem;">Instagram</p>
+                <a href="{{ $empresaFallback->instagram }}" target="_blank" style="color:#E8600A; font-size:0.9rem; text-decoration:none;">{{ $empresaFallback->instagram }}</a>
+            </div>
+            @endif
         </div>
+        @endif
     </div>
 </section>
 

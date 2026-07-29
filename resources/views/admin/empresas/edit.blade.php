@@ -73,6 +73,12 @@
             @error('publico_alvo')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
         <div class="mb-3">
+            <label class="form-label">Instagram</label>
+            <input type="text" name="instagram" class="form-control @error('instagram') is-invalid @enderror"
+                   placeholder="https://instagram.com/..." value="{{ old('instagram', $empresa->instagram) }}">
+            @error('instagram')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
+        <div class="mb-3">
             <label class="form-label">Sobre</label>
             <textarea name="sobre_texto" rows="4" class="form-control @error('sobre_texto') is-invalid @enderror">{{ old('sobre_texto', $empresa->sobre_texto) }}</textarea>
             @error('sobre_texto')<div class="invalid-feedback">{{ $message }}</div>@enderror

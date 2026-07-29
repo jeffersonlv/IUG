@@ -23,7 +23,8 @@ Route::get('/', function (\Illuminate\Http\Request $request) {
     $view = $request->query('t') === '2026' ? 'test' : 'welcome';
     if ($view === 'test') {
         $empresas = \App\Models\Empresa::where('ativo', true)->where('visivel', true)->orderBy('id')->get();
-        return view($view, compact('cursos', 'documentos', 'configs', 'empresas'));
+        $empresaFallback = $empresas->isEmpty() ? \App\Models\Empresa::orderBy('id')->first() : null;
+        return view($view, compact('cursos', 'documentos', 'configs', 'empresas', 'empresaFallback'));
     }
     return view($view, compact('cursos', 'documentos', 'configs'));
 });

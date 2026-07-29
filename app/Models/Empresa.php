@@ -11,7 +11,7 @@ class Empresa extends Model
 
     protected $fillable = [
         'nome', 'data_criacao', 'ativo', 'visivel', 'icone', 'logo',
-        'telefone', 'whatsapp', 'email', 'sobre_texto', 'endereco', 'publico_alvo',
+        'telefone', 'whatsapp', 'email', 'sobre_texto', 'endereco', 'publico_alvo', 'instagram',
     ];
 
     protected $casts = [
