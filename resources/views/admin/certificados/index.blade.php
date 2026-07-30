@@ -89,6 +89,7 @@ $cursosJson = $cursos->map(fn($c) => [
                     <span id="btnSalvarLoad" class="spinner-border spinner-border-sm ms-1 d-none"></span>
                 </button>
                 <button onclick="abrirAbas()" class="btn btn-outline-secondary px-4">Visualizar (abas)</button>
+                <button onclick="visualizarHtml()" class="btn btn-outline-primary px-4">Visualizar HTML</button>
             </div>
 
             <div id="erroPanel" class="d-none mt-3">
@@ -107,7 +108,7 @@ $cursosJson = $cursos->map(fn($c) => [
     </div>
 </div>
 
-<style>
+<style id="certPreviewStyles">
 /* Replica paper-css A4 landscape @ 96dpi com padding-10mm */
 #certPreview {
     position: fixed; left: -9999px; top: 0;
@@ -496,6 +497,38 @@ async function excluirCurso(slug) {
     });
 
     carregarLotes();
+}
+
+function visualizarHtml() {
+    const titulo = document.getElementById('titulo').value.trim();
+    const data   = document.getElementById('data').value.trim();
+    const cidade = document.getElementById('cidade').value.trim();
+    const topico = document.getElementById('topico').value.trim();
+    const alunos = parsearAlunos();
+
+    if (!titulo || !data || !cidade) { alert('Preencha título, data e cidade.'); return; }
+    if (alunos.length === 0) { alert('Informe ao menos um participante.'); return; }
+
+    const a = alunos[0];
+    document.getElementById('certNome').innerHTML     = 'Certificamos que <b>' + a.nome + '</b> participou do curso';
+    document.getElementById('certTitulo').textContent = '“' + titulo + '”';
+    document.getElementById('certData').innerHTML     = 'Realizado nos dias <b>' + data + '</b>, na cidade de <b>' + cidade + '</b>.';
+    const topicoEl = document.getElementById('certTopico');
+    if (topico) { topicoEl.innerHTML = '<b>TÓPICOS: </b>' + topico; topicoEl.style.display = ''; }
+    else         { topicoEl.innerHTML = ''; topicoEl.style.display = 'none'; }
+
+    const wrapHtml  = document.querySelector('#certPreview .cert-wrap').outerHTML;
+    const stylesHtml = document.getElementById('certPreviewStyles').outerHTML;
+
+    const win = window.open('', '_blank');
+    win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Preview Certificado</title>
+        ${stylesHtml}
+        <style>
+            body { margin:0; background:#666; display:flex; justify-content:center; padding:20px; }
+            #certPreview { position:relative !important; left:0 !important; top:0 !important; box-shadow:0 4px 20px rgba(0,0,0,.4); }
+        </style>
+        </head><body><div id="certPreview">${wrapHtml}</div></body></html>`);
+    win.document.close();
 }
 
 function abrirAbas() {
