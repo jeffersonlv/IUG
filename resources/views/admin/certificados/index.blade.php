@@ -31,6 +31,11 @@ $cursosJson = $cursos->map(fn($c) => [
     'alunos_raw' => $c->alunos->map(fn($a) =>
         $a->nome_completo . ($a->cidade || $a->estado ? ';' . trim($a->cidade . '-' . $a->estado, '-') : '')
     )->implode("\n"),
+    'empresa'    => $c->empresa ? [
+        'nome'     => $c->empresa->nome,
+        'cnpj'     => $c->empresa->cnpj,
+        'logo_url' => $c->empresa->logo_url,
+    ] : null,
 ])->keyBy('id');
 @endphp
 
@@ -146,11 +151,17 @@ $cursosJson = $cursos->map(fn($c) => [
 #certPreview .assinatura {
     position: absolute; bottom: 90px; right: 155px; width: 15%;
 }
+#certPreview .cert-logo {
+    position: absolute; top: 30px; left: 40px;
+    max-height: 70px; max-width: 180px; object-fit: contain;
+    display: none;
+}
 </style>
 
 <div id="certPreview">
     <div class="cert-wrap">
         <img class="cert-bg" id="certBg" src="" />
+        <img class="cert-logo" id="certLogo" src="" />
         <div class="cert-content">
             <div class="divcentro nome"   id="certNome"></div>
             <div class="divcentro titulo" id="certTitulo"></div>
@@ -159,7 +170,7 @@ $cursosJson = $cursos->map(fn($c) => [
         </div>
 
         <div class="participante">Participante</div>
-        <div class="instituto">Instituto Ulysses Guimarães LTDA<br>CNPJ: 40.033.708/0001-63</div>
+        <div class="instituto" id="certInstituto">Instituto Ulysses Guimarães LTDA<br>CNPJ: 40.033.708/0001-63</div>
         <img class="assinatura" id="certAss" src="" />
     </div>
 </div>
@@ -173,6 +184,27 @@ const uploadUrl   = "{{ route('admin.certificados.uploadPdf') }}";
 const imprimirUrl = "{{ route('admin.certificados.imprimir') }}";
 const zipUrl      = "{{ route('admin.certificados.zip') }}";
 const csrfToken   = "{{ csrf_token() }}";
+const institutoPadrao = 'Instituto Ulysses Guimarães LTDA<br>CNPJ: 40.033.708/0001-63';
+
+function atualizarBrandingEmpresa(empresa) {
+    const logoEl = document.getElementById('certLogo');
+    const instEl = document.getElementById('certInstituto');
+
+    if (empresa && empresa.nome) {
+        instEl.innerHTML = empresa.nome + (empresa.cnpj ? '<br>CNPJ: ' + empresa.cnpj : '');
+        if (empresa.logo_url) {
+            logoEl.src = empresa.logo_url;
+            logoEl.style.display = '';
+        } else {
+            logoEl.removeAttribute('src');
+            logoEl.style.display = 'none';
+        }
+    } else {
+        instEl.innerHTML = institutoPadrao;
+        logoEl.removeAttribute('src');
+        logoEl.style.display = 'none';
+    }
+}
 
 // Pré-carrega imagens no preview oculto
 document.getElementById('certBg').src  = fundoB64;
@@ -197,6 +229,7 @@ document.getElementById('cursoSelect').addEventListener('change', function() {
     document.getElementById('nomes').value  = c.alunos_raw;
     document.getElementById('downloadPanel').classList.add('d-none');
     document.getElementById('erroPanel').classList.add('d-none');
+    atualizarBrandingEmpresa(c.empresa);
 });
 
 function parsearAlunos() {
@@ -232,10 +265,13 @@ async function capturarCertificadoPDF(aluno, titulo, data, cidade, topico) {
     else         { topicoEl.innerHTML = ''; topicoEl.style.display = 'none'; }
 
     // Garante que imagens carregaram
-    await Promise.all([
+    const imgsAguardar = [
         aguardarImagem(document.getElementById('certBg')),
         aguardarImagem(document.getElementById('certAss')),
-    ]);
+    ];
+    const logoEl = document.getElementById('certLogo');
+    if (logoEl.style.display !== 'none' && logoEl.src) imgsAguardar.push(aguardarImagem(logoEl));
+    await Promise.all(imgsAguardar);
     await new Promise(r => setTimeout(r, 150)); // repaint
 
     const wrap = document.querySelector('#certPreview .cert-wrap');

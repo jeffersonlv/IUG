@@ -11,7 +11,7 @@ class CertificadoController extends Controller
 {
     public function index()
     {
-        $cursos = Curso::with('alunos')->orderBy('data_inicio', 'desc')->get();
+        $cursos = Curso::with(['alunos', 'empresa'])->orderBy('data_inicio', 'desc')->get();
 
         $fundoPath = public_path('images/fundoCertificado.jpg');
         $fundoB64  = file_exists($fundoPath)
