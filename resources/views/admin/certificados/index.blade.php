@@ -194,7 +194,7 @@ function atualizarBrandingEmpresa(empresa) {
         instEl.innerHTML = empresa.nome + (empresa.cnpj ? '<br>CNPJ: ' + empresa.cnpj : '');
         if (empresa.logo_url) {
             logoEl.src = empresa.logo_url;
-            logoEl.style.display = '';
+            logoEl.style.display = 'block';
         } else {
             logoEl.removeAttribute('src');
             logoEl.style.display = 'none';
