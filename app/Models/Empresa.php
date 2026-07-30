@@ -10,7 +10,7 @@ class Empresa extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nome', 'data_criacao', 'ativo', 'visivel', 'icone', 'logo',
+        'nome', 'cnpj', 'data_criacao', 'ativo', 'visivel', 'icone', 'logo',
         'telefone', 'whatsapp', 'email', 'sobre_texto', 'endereco', 'publico_alvo', 'instagram',
     ];
 

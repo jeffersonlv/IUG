@@ -18,6 +18,12 @@
             @error('nome')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
         <div class="mb-3">
+            <label class="form-label">CNPJ</label>
+            <input type="text" name="cnpj" class="form-control @error('cnpj') is-invalid @enderror"
+                   placeholder="00.000.000/0000-00" value="{{ old('cnpj') }}">
+            @error('cnpj')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
+        <div class="mb-3">
             <label class="form-label">Ícone <small class="text-muted">(JPG/PNG/WEBP/SVG, máx 1MB)</small></label>
             <input type="file" name="icone" class="form-control @error('icone') is-invalid @enderror"
                    accept="image/jpg,image/jpeg,image/png,image/webp,image/svg+xml">

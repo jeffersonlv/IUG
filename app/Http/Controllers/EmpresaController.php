@@ -30,6 +30,7 @@ class EmpresaController extends Controller
     {
         $validated = $request->validate([
             'nome'         => 'required|string|max:255',
+            'cnpj'         => 'nullable|string|max:20',
             'ativo'        => 'boolean',
             'visivel'      => 'boolean',
             'telefone'     => 'nullable|string|max:30',
@@ -75,6 +76,7 @@ class EmpresaController extends Controller
         $empresa = Empresa::findOrFail($id);
         $validated = $request->validate([
             'nome'         => 'required|string|max:255',
+            'cnpj'         => 'nullable|string|max:20',
             'ativo'        => 'boolean',
             'visivel'      => 'boolean',
             'telefone'     => 'nullable|string|max:30',

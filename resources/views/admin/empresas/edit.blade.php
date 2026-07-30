@@ -19,6 +19,12 @@
             @error('nome')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
         <div class="mb-3">
+            <label class="form-label">CNPJ</label>
+            <input type="text" name="cnpj" class="form-control @error('cnpj') is-invalid @enderror"
+                   placeholder="00.000.000/0000-00" value="{{ old('cnpj', $empresa->cnpj) }}">
+            @error('cnpj')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
+        <div class="mb-3">
             <label class="form-label">Ícone <small class="text-muted">(deixe em branco para manter atual)</small></label>
             @if($empresa->icone)
                 <div class="mb-2"><img src="{{ $empresa->icone_url }}" alt="{{ $empresa->nome }}" style="width:48px; height:48px; object-fit:contain; border-radius:6px; border:1px solid #DDE1EB;"></div>
