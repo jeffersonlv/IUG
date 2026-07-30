@@ -48,7 +48,7 @@ $cursosJson = $cursos->map(fn($c) => [
                 <select id="cursoSelect" class="form-select form-select-sm">
                     <option value="">— Selecione para preencher automaticamente —</option>
                     @foreach($cursos as $curso)
-                        <option value="{{ $curso->id }}">{{ $curso->titulo }} — {{ $curso->data_inicio->format('d/m/Y') }}</option>
+                        <option value="{{ $curso->id }}">{{ $curso->titulo }}{{ $curso->empresa ? ' - ' . $curso->empresa->nome : '' }} — {{ $curso->data_inicio->format('d/m/Y') }}</option>
                     @endforeach
                 </select>
             </div>
