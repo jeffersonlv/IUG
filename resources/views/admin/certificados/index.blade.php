@@ -152,8 +152,8 @@ $cursosJson = $cursos->map(fn($c) => [
     position: absolute; bottom: 90px; right: 155px; width: 15%;
 }
 #certPreview .cert-logo {
-    position: absolute; top: 30px; left: 40px;
-    max-height: 70px; max-width: 180px; object-fit: contain;
+    position: absolute; top: 140px; left: 50%; transform: translateX(-50%);
+    max-height: 90px; max-width: 220px; object-fit: contain;
     display: none;
 }
 </style>

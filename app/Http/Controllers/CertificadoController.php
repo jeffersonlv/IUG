@@ -13,7 +13,7 @@ class CertificadoController extends Controller
     {
         $cursos = Curso::with(['alunos', 'empresa'])->orderBy('data_inicio', 'desc')->get();
 
-        $fundoPath = public_path('images/fundoCertificado.jpg');
+        $fundoPath = public_path('images/fundoCertificadoGenerico.jpg');
         $fundoB64  = file_exists($fundoPath)
             ? 'data:image/jpeg;base64,' . base64_encode(file_get_contents($fundoPath))
             : '';
