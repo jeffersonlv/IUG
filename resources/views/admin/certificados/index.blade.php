@@ -35,6 +35,7 @@ $cursosJson = $cursos->map(fn($c) => [
         'nome'     => $c->empresa->nome,
         'cnpj'     => $c->empresa->cnpj,
         'logo_url' => $c->empresa->logo_url,
+        'fundo_url'=> $c->empresa->fundo_certificado_url,
     ] : null,
 ])->keyBy('id');
 @endphp
@@ -190,6 +191,9 @@ const institutoPadrao = 'Instituto Ulysses Guimarães LTDA<br>CNPJ: 40.033.708/0
 function atualizarBrandingEmpresa(empresa) {
     const logoEl = document.getElementById('certLogo');
     const instEl = document.getElementById('certInstituto');
+    const bgEl   = document.getElementById('certBg');
+
+    bgEl.src = (empresa && empresa.fundo_url) ? empresa.fundo_url : fundoB64;
 
     if (empresa && empresa.nome) {
         instEl.innerHTML = empresa.nome + (empresa.cnpj ? '<br>CNPJ: ' + empresa.cnpj : '');

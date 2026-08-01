@@ -42,6 +42,7 @@ class EmpresaController extends Controller
             'instagram'    => 'nullable|string|max:255',
             'icone'        => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:1024',
             'logo'         => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:2048',
+            'fundo_certificado' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072',
         ]);
 
         if ($request->hasFile('icone')) {
@@ -56,6 +57,13 @@ class EmpresaController extends Controller
             $filename = time() . '_logo_' . $file->getClientOriginalName();
             $file->storeAs('empresas', $filename, 'public');
             $validated['logo'] = $filename;
+        }
+
+        if ($request->hasFile('fundo_certificado')) {
+            $file = $request->file('fundo_certificado');
+            $filename = time() . '_fundo_' . $file->getClientOriginalName();
+            $file->storeAs('empresas', $filename, 'public');
+            $validated['fundo_certificado'] = $filename;
         }
 
         $validated['data_criacao'] = now();
@@ -88,6 +96,7 @@ class EmpresaController extends Controller
             'instagram'    => 'nullable|string|max:255',
             'icone'        => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:1024',
             'logo'         => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:2048',
+            'fundo_certificado' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072',
         ]);
 
         if ($request->hasFile('icone')) {
@@ -110,6 +119,16 @@ class EmpresaController extends Controller
             $validated['logo'] = $filename;
         }
 
+        if ($request->hasFile('fundo_certificado')) {
+            if ($empresa->fundo_certificado) {
+                Storage::disk('public')->delete('empresas/' . $empresa->fundo_certificado);
+            }
+            $file = $request->file('fundo_certificado');
+            $filename = time() . '_fundo_' . $file->getClientOriginalName();
+            $file->storeAs('empresas', $filename, 'public');
+            $validated['fundo_certificado'] = $filename;
+        }
+
         $validated['ativo'] = $request->boolean('ativo');
         $validated['visivel'] = $request->boolean('visivel');
         $empresa->update($validated);
@@ -124,6 +143,9 @@ class EmpresaController extends Controller
         }
         if ($empresa->logo) {
             Storage::disk('public')->delete('empresas/' . $empresa->logo);
+        }
+        if ($empresa->fundo_certificado) {
+            Storage::disk('public')->delete('empresas/' . $empresa->fundo_certificado);
         }
         $empresa->delete();
         return redirect()->route('admin.empresas.index')->with('success', 'Empresa deletada com sucesso.');

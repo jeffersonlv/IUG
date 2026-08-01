@@ -43,6 +43,15 @@
             @error('logo')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
         <div class="mb-3">
+            <label class="form-label">Imagem de Fundo do Certificado <small class="text-muted">(deixe em branco para manter atual — recomendado A4 paisagem)</small></label>
+            @if($empresa->fundo_certificado)
+                <div class="mb-2"><img src="{{ $empresa->fundo_certificado_url }}" alt="Fundo do certificado" style="max-width:280px; max-height:140px; object-fit:contain; border-radius:6px; border:1px solid #DDE1EB;"></div>
+            @endif
+            <input type="file" name="fundo_certificado" class="form-control @error('fundo_certificado') is-invalid @enderror"
+                   accept="image/jpg,image/jpeg,image/png,image/webp">
+            @error('fundo_certificado')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
+        <div class="mb-3">
             <label class="form-label">Data de Criação</label>
             <input type="text" class="form-control" value="{{ $empresa->data_criacao ? $empresa->data_criacao->format('d/m/Y') : '-' }}" disabled>
         </div>

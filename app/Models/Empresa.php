@@ -10,7 +10,7 @@ class Empresa extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nome', 'cnpj', 'data_criacao', 'ativo', 'visivel', 'icone', 'logo',
+        'nome', 'cnpj', 'data_criacao', 'ativo', 'visivel', 'icone', 'logo', 'fundo_certificado',
         'telefone', 'whatsapp', 'email', 'sobre_texto', 'endereco', 'publico_alvo', 'instagram',
     ];
 
@@ -32,5 +32,12 @@ class Empresa extends Model
         if (!$this->logo) return null;
         if (strpos($this->logo, '/') === 0) return $this->logo;
         return \Illuminate\Support\Facades\Storage::url('empresas/' . $this->logo);
+    }
+
+    public function getFundoCertificadoUrlAttribute(): ?string
+    {
+        if (!$this->fundo_certificado) return null;
+        if (strpos($this->fundo_certificado, '/') === 0) return $this->fundo_certificado;
+        return \Illuminate\Support\Facades\Storage::url('empresas/' . $this->fundo_certificado);
     }
 }

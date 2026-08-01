@@ -35,6 +35,12 @@
                    accept="image/jpg,image/jpeg,image/png,image/webp,image/svg+xml">
             @error('logo')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
+        <div class="mb-3">
+            <label class="form-label">Imagem de Fundo do Certificado <small class="text-muted">(JPG/PNG/WEBP, máx 3MB, recomendado A4 paisagem)</small></label>
+            <input type="file" name="fundo_certificado" class="form-control @error('fundo_certificado') is-invalid @enderror"
+                   accept="image/jpg,image/jpeg,image/png,image/webp">
+            @error('fundo_certificado')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
         <div class="row mb-3">
             <div class="col-md-6">
                 <label class="form-label">Telefone</label>
