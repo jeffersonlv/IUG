@@ -127,7 +127,7 @@ class CertificadoController extends Controller
         ]);
 
         $cursoSlug = $this->slug($request->curso_slug);
-        $filename  = $this->slug(pathinfo($request->filename, PATHINFO_FILENAME)) . '.pdf';
+        $filename  = $this->sanitizeFilename(pathinfo($request->filename, PATHINFO_FILENAME)) . '.pdf';
         $caminho   = "public/certificados/{$cursoSlug}/{$filename}";
 
         // Recebe JPEG do canvas, gera PDF via DOMpdf com imagem embutida
@@ -354,5 +354,17 @@ class CertificadoController extends Controller
         $str = preg_replace('/[^a-zA-Z0-9\s_-]/', '', $str);
         $str = trim(preg_replace('/[\s_-]+/', '_', $str), '_');
         return strtolower($str);
+    }
+
+    // Mantém acentuação e caixa como enviado; só troca separador (;) e
+    // caracteres inválidos em nome de arquivo por underline.
+    private function sanitizeFilename(string $str): string
+    {
+        $str = str_replace(';', '_', $str);
+        $str = preg_replace('/[\/\\\\:*?"<>|]/', '_', $str);
+        $str = preg_replace('/\s+/', '_', $str);
+        $str = preg_replace('/_+/', '_', $str);
+        $str = trim($str, '_');
+        return $str !== '' ? $str : 'certificado';
     }
 }

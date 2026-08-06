@@ -253,6 +253,15 @@ function parsearAlunos() {
         .filter(a => a.nome !== '');
 }
 
+function sanitizarNomeArquivo(str) {
+    return str
+        .replace(/;/g, '_')
+        .replace(/[\/\\:*?"<>|]/g, '_')
+        .replace(/\s+/g, '_')
+        .replace(/_+/g, '_')
+        .replace(/^_+|_+$/g, '');
+}
+
 async function aguardarImagem(img) {
     if (img.complete && img.naturalWidth > 0) return;
     return new Promise((res, rej) => {
@@ -323,10 +332,8 @@ async function gerarESalvar() {
 
             const imgBase64 = await capturarCertificadoPDF(a, titulo, data, cidade, topico);
 
-            const locSlug = [a.estado_aluno, a.cidade_aluno, a.nome]
-                .filter(Boolean).join('_')
-                .toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
-            const filename = locSlug + '.pdf';
+            const nomeBase = [a.estado_aluno, a.cidade_aluno, a.nome].filter(Boolean).join('_');
+            const filename = sanitizarNomeArquivo(nomeBase) + '.pdf';
 
             const resp = await fetch(uploadUrl, {
                 method: 'POST',
