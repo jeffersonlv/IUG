@@ -257,9 +257,7 @@ function sanitizarNomeArquivo(str) {
     return str
         .replace(/;/g, '_')
         .replace(/[\/\\:*?"<>|]/g, '_')
-        .replace(/\s+/g, '_')
-        .replace(/_+/g, '_')
-        .replace(/^_+|_+$/g, '');
+        .trim();
 }
 
 async function aguardarImagem(img) {

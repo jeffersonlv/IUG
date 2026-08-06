@@ -363,9 +363,7 @@ class CertificadoController extends Controller
     {
         $str = str_replace(';', '_', $str);
         $str = preg_replace('/[\/\\\\:*?"<>|]/', '_', $str);
-        $str = preg_replace('/\s+/', '_', $str);
-        $str = preg_replace('/_+/', '_', $str);
-        $str = trim($str, '_');
+        $str = trim($str);
         return $str !== '' ? $str : 'certificado';
     }
 }
