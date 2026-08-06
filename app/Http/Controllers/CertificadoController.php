@@ -184,7 +184,8 @@ class CertificadoController extends Controller
 
         if ($cidade) {
             $cidadeSlug = $this->slug($cidade);
-            $arquivos = $arquivos->filter(fn($f) => strpos(basename($f), $cidadeSlug) !== false);
+            // Nome do arquivo mantém acentuação/caixa original — normaliza os dois lados pra comparar.
+            $arquivos = $arquivos->filter(fn($f) => strpos($this->slug(basename($f)), $cidadeSlug) !== false);
         }
 
         if ($arquivos->isEmpty()) {
