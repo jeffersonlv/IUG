@@ -20,13 +20,9 @@ Route::get('/', function (\Illuminate\Http\Request $request) {
         ->orderBy('ordem')->orderBy('created_at', 'desc')->get();
     $configs = \App\Models\SiteConfig::all()->pluck('valor', 'chave')->toArray();
 
-    $view = $request->query('t') === '2026' ? 'test' : 'welcome';
-    if ($view === 'test') {
-        $empresas = \App\Models\Empresa::where('ativo', true)->where('visivel', true)->orderBy('id')->get();
-        $empresaFallback = $empresas->isEmpty() ? \App\Models\Empresa::orderBy('id')->first() : null;
-        return view($view, compact('cursos', 'documentos', 'configs', 'empresas', 'empresaFallback'));
-    }
-    return view($view, compact('cursos', 'documentos', 'configs'));
+    $empresas = \App\Models\Empresa::where('ativo', true)->where('visivel', true)->orderBy('id')->get();
+    $empresaFallback = $empresas->isEmpty() ? \App\Models\Empresa::orderBy('id')->first() : null;
+    return view('welcome', compact('cursos', 'documentos', 'configs', 'empresas', 'empresaFallback'));
 });
 
 Route::get('/run-seeder-iug2026', function () {
