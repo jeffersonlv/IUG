@@ -77,11 +77,18 @@
                 <div class="card h-100">
                     @if($doc->arquivo_pdf)
                     @php $docUrl = \Illuminate\Support\Facades\Storage::url('documentos/' . $doc->arquivo_pdf); @endphp
+                    @if($isMobile)
+                    <a href="{{ route('download.documento', $doc->id) }}" style="height:200px; background:linear-gradient(135deg,#1A2B5F,#243a7a); border-radius:8px 8px 0 0; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:8px; text-decoration:none;">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+                        <span style="color:rgba(255,255,255,0.7); font-size:0.7rem; letter-spacing:1px; text-transform:uppercase;">Toque para abrir o PDF</span>
+                    </a>
+                    @else
                     <div style="border-radius:8px 8px 0 0; overflow:hidden; border-bottom:1px solid #DDE1EB;">
                         <iframe src="{{ $docUrl }}#toolbar=0&navpanes=0&scrollbar=0&view=FitH"
                                 style="width:100%; height:200px; display:block; border:none;"
                                 loading="lazy"></iframe>
                     </div>
+                    @endif
                     @else
                     <div style="height:200px; background:linear-gradient(135deg,#1A2B5F,#243a7a); border-radius:8px 8px 0 0; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:8px;">
                         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
@@ -162,11 +169,18 @@
                             $pdfUrl = '/storage/cursos/' . $curso->arquivo_pdf;
                         }
                     @endphp
+                    @if($isMobile)
+                    <a href="{{ route('download.flyer', $curso->id) }}" class="mt-2 mb-3" style="height:220px; background:linear-gradient(135deg,#1A2B5F,#243a7a); border-radius:6px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:8px; text-decoration:none;">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+                        <span style="color:rgba(255,255,255,0.7); font-size:0.7rem; letter-spacing:1px; text-transform:uppercase;">Toque para abrir o flyer</span>
+                    </a>
+                    @else
                     <div class="mt-2 mb-3" style="border-radius:6px; overflow:hidden; border:1px solid #DDE1EB;">
                         <iframe src="{{ $pdfUrl }}#toolbar=0&navpanes=0&scrollbar=0&view=FitH"
                                 style="width:100%; height:220px; display:block; border:none;"
                                 loading="lazy"></iframe>
                     </div>
+                    @endif
                     <a href="{{ route('download.flyer', $curso->id) }}" class="btn btn-primary btn-sm w-100 mt-auto">
                         ⬇ Download Flyer
                     </a>

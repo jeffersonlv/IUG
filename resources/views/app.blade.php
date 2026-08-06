@@ -41,6 +41,13 @@
             text-decoration: none;
         }
 
+        /* No mobile mostra o icone da empresa em vez da logo completa */
+        .navbar-logo-icon { display: none; }
+        @media (max-width: 767.98px) {
+            .navbar-logo-full { display: none !important; }
+            .navbar-logo-icon { display: inline-block !important; }
+        }
+
         .navbar-brand .brand-icon {
             display: flex;
             flex-direction: column;
@@ -300,7 +307,12 @@
             <a class="navbar-brand" href="/" style="display:flex; align-items:center; gap:1.5rem;">
                 @foreach($empresas as $emp)
                     @if($emp->logo_url)
-                    <img src="{{ $emp->logo_url }}" alt="{{ $emp->nome }}" style="height:40px; width:auto; object-fit:contain;">
+                    <img class="navbar-logo-full" src="{{ $emp->logo_url }}" alt="{{ $emp->nome }}" style="height:40px; width:auto; object-fit:contain;">
+                    @endif
+                    @if($emp->icone_url)
+                    <img class="navbar-logo-icon" src="{{ $emp->icone_url }}" alt="{{ $emp->nome }}" style="height:40px; width:40px; object-fit:contain;">
+                    @elseif($emp->logo_url)
+                    <img class="navbar-logo-icon" src="{{ $emp->logo_url }}" alt="{{ $emp->nome }}" style="height:40px; width:auto; object-fit:contain;">
                     @endif
                 @endforeach
             </a>

@@ -22,7 +22,8 @@ Route::get('/', function (\Illuminate\Http\Request $request) {
 
     $empresas = \App\Models\Empresa::where('ativo', true)->where('visivel', true)->orderBy('id')->get();
     $empresaFallback = $empresas->isEmpty() ? \App\Models\Empresa::orderBy('id')->first() : null;
-    return view('welcome', compact('cursos', 'documentos', 'configs', 'empresas', 'empresaFallback'));
+    $isMobile = \App\Models\PageView::detectDevice($request->userAgent() ?? '') === 'mobile';
+    return view('welcome', compact('cursos', 'documentos', 'configs', 'empresas', 'empresaFallback', 'isMobile'));
 });
 
 Route::get('/run-seeder-iug2026', function () {
