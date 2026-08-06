@@ -32,11 +32,20 @@ $cursosJson = $cursos->map(fn($c) => [
         $a->nome_completo . ($a->cidade || $a->estado ? ';' . trim($a->cidade . '-' . $a->estado, '-') : '')
     )->implode("\n"),
     'empresa'    => $c->empresa ? [
+        'id'       => $c->empresa->id,
         'nome'     => $c->empresa->nome,
         'cnpj'     => $c->empresa->cnpj,
         'logo_url' => $c->empresa->logo_url,
         'fundo_url'=> $c->empresa->fundo_certificado_url,
     ] : null,
+])->keyBy('id');
+
+$empresasJson = $empresas->map(fn($e) => [
+    'id'        => $e->id,
+    'nome'      => $e->nome,
+    'cnpj'      => $e->cnpj,
+    'logo_url'  => $e->logo_url,
+    'fundo_url' => $e->fundo_certificado_url,
 ])->keyBy('id');
 @endphp
 
@@ -50,6 +59,16 @@ $cursosJson = $cursos->map(fn($c) => [
                     <option value="">— Selecione para preencher automaticamente —</option>
                     @foreach($cursos as $curso)
                         <option value="{{ $curso->id }}">{{ $curso->titulo }}{{ $curso->empresa ? ' - ' . $curso->empresa->nome : '' }} — {{ $curso->data_inicio->format('d/m/Y') }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="mb-4 p-3" style="background:#F0F2F8; border-radius:8px;">
+                <label class="form-label fw-semibold mb-1" style="font-size:0.875rem;">Empresa (logo, CNPJ e fundo do certificado)</label>
+                <select id="empresaSelect" class="form-select form-select-sm">
+                    <option value="">— Nenhuma (padrão Instituto) —</option>
+                    @foreach($empresas as $empresa)
+                        <option value="{{ $empresa->id }}">{{ $empresa->nome }}</option>
                     @endforeach
                 </select>
             </div>
@@ -179,7 +198,8 @@ $cursosJson = $cursos->map(fn($c) => [
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
-const cursosData  = @json($cursosJson);
+const cursosData   = @json($cursosJson);
+const empresasData = @json($empresasJson);
 const fundoB64    = @json($fundoB64);
 const assB64      = @json($assB64);
 const uploadUrl   = "{{ route('admin.certificados.uploadPdf') }}";
@@ -234,7 +254,12 @@ document.getElementById('cursoSelect').addEventListener('change', function() {
     document.getElementById('nomes').value  = c.alunos_raw;
     document.getElementById('downloadPanel').classList.add('d-none');
     document.getElementById('erroPanel').classList.add('d-none');
+    document.getElementById('empresaSelect').value = c.empresa ? c.empresa.id ?? '' : '';
     atualizarBrandingEmpresa(c.empresa);
+});
+
+document.getElementById('empresaSelect').addEventListener('change', function() {
+    atualizarBrandingEmpresa(this.value ? empresasData[this.value] : null);
 });
 
 function parsearAlunos() {

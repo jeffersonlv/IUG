@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Curso;
+use App\Models\Empresa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use ZipArchive;
@@ -12,6 +13,7 @@ class CertificadoController extends Controller
     public function index()
     {
         $cursos = Curso::with(['alunos', 'empresa'])->orderBy('data_inicio', 'desc')->get();
+        $empresas = Empresa::orderBy('nome')->get(['id', 'nome', 'cnpj', 'logo', 'fundo_certificado']);
 
         $fundoPath = public_path('images/fundoCertificadoGenerico.jpg');
         $fundoB64  = file_exists($fundoPath)
@@ -23,7 +25,7 @@ class CertificadoController extends Controller
             ? 'data:image/png;base64,' . base64_encode(file_get_contents($assPath))
             : '';
 
-        return view('admin.certificados.index', compact('cursos', 'fundoB64', 'assB64'));
+        return view('admin.certificados.index', compact('cursos', 'empresas', 'fundoB64', 'assB64'));
     }
 
     public function imprimir(Request $request)
